@@ -39,10 +39,17 @@ def get_engine() -> AsyncEngine | None:
         connect_args["prepared_statement_cache_size"] = 0
 
     try:
-        from sqlalchemy.pool import NullPool
+        if url.startswith("sqlite"):
+            from sqlalchemy.pool import StaticPool
+            poolclass = StaticPool
+            connect_args["check_same_thread"] = False
+        else:
+            from sqlalchemy.pool import NullPool
+            poolclass = NullPool
+
         _engine = create_async_engine(
             url,
-            poolclass=NullPool,
+            poolclass=poolclass,
             echo=False,
             connect_args=connect_args,
         )
