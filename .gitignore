@@ -1,0 +1,75 @@
+# =====================================================================
+# KnowFlow AI — Root .gitignore
+# =====================================================================
+
+# ── Secrets & environment files ──────────────────────────────────────
+backend/.env
+frontend/.env.local
+*.env
+.env.*
+!.env.example
+!.env*.example
+!backend/.env.example
+!backend/.env.production.example
+!frontend/.env.example
+!frontend/.env.production.example
+
+# ── Python ───────────────────────────────────────────────────────────
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# ── Node / Next.js ───────────────────────────────────────────────────
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.pnp
+frontend/.pnp.js
+*.tsbuildinfo
+
+# ── ML model caches ──────────────────────────────────────────────────
+fastembed_cache/
+.cache/
+*.onnx
+
+# ── Docker ───────────────────────────────────────────────────────────
+*.dockerignore
+
+# ── IDE / OS ─────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Scratch / temp ───────────────────────────────────────────────────
+scratch/
+*.log
+*.tmp
+*.bak
+
+# ── Demo document binaries (keep scripts, not generated files) ────────
+demo_documents/*.pdf
+demo_documents/*.docx
+demo_documents/*.bin

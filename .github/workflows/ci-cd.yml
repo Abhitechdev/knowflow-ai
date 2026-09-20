@@ -1,0 +1,242 @@
+name: KnowFlow AI CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.11"
+  NODE_VERSION: "20"
+
+jobs:
+  # ------------------------------------------------------------------ #
+  # Job 1: Backend Quality Gate                                         #
+  # ------------------------------------------------------------------ #
+  backend-quality:
+    name: Backend — Lint, Test & Benchmark
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint with Ruff
+        run: |
+          pip install ruff
+          ruff check backend/app backend/tests --output-format=github
+
+      - name: Run full test suite (all tests must pass)
+        env:
+          ENVIRONMENT: test
+          DEBUG: "True"
+          DATABASE_URL: ""
+          NEXT_PUBLIC_SUPABASE_URL: ""
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
+          SUPABASE_SERVICE_ROLE_KEY: ""
+          LLM_API_KEY: ""
+          EMBEDDING_API_KEY: ""
+        run: |
+          PYTHONPATH=backend pytest backend/tests -v --tb=short --junitxml=test-results.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-results
+          path: test-results.xml
+
+      - name: Dependency vulnerability audit
+        run: |
+          pip install pip-audit
+          pip-audit --requirement backend/requirements.txt --output=json > pip-audit-results.json || true
+          echo "pip-audit completed. Review pip-audit-results.json for findings."
+
+      - name: Upload pip-audit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pip-audit-results
+          path: pip-audit-results.json
+
+  # ------------------------------------------------------------------ #
+  # Job 2: Frontend Quality Gate                                        #
+  # ------------------------------------------------------------------ #
+  frontend-quality:
+    name: Frontend — Lint, Type Check & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: ESLint check
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: TypeScript type check
+        run: |
+          cd frontend
+          npx tsc --noEmit
+
+      - name: Build validation (Next.js standalone)
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
+          NEXT_PUBLIC_API_URL: "http://localhost:8000"
+        run: |
+          cd frontend
+          npm run build
+
+      - name: npm audit (dependency vulnerability check)
+        run: |
+          cd frontend
+          npm audit --audit-level=high || echo "npm audit found issues — review manually."
+
+  # ------------------------------------------------------------------ #
+  # Job 3: Secret Detection                                             #
+  # ------------------------------------------------------------------ #
+  secret-detection:
+    name: Secret Detection (gitleaks)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history required for gitleaks
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ------------------------------------------------------------------ #
+  # Job 4: Container Build Verification                                 #
+  # ------------------------------------------------------------------ #
+  container-build:
+    name: Container Build Verification
+    runs-on: ubuntu-latest
+    needs: [backend-quality, frontend-quality]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build backend Docker image
+        run: |
+          docker build -t knowflow-backend:ci ./backend
+          echo "Backend image built successfully"
+
+      - name: Build frontend Docker image
+        run: |
+          docker build -t knowflow-frontend:ci ./frontend
+          echo "Frontend image built successfully"
+
+      - name: Container vulnerability scan (trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: knowflow-backend:ci
+          format: table
+          exit-code: 0  # Report but don't fail CI on findings
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+
+  # ------------------------------------------------------------------ #
+  # Job 5: Security Audit                                               #
+  # ------------------------------------------------------------------ #
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    needs: [backend-quality]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Run internal security audit
+        run: |
+          python scripts/audit_security.py --strict
+
+  # ------------------------------------------------------------------ #
+  # Job 6: Staging Deploy (on main branch push)                        #
+  # ------------------------------------------------------------------ #
+  staging-deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [backend-quality, frontend-quality, secret-detection, container-build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: staging
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger staging deployment
+        run: |
+          echo "Staging deployment triggered for commit ${{ github.sha }}"
+          echo "Configure this step with your deployment provider:"
+          echo "  - Render: curl -X POST https://api.render.com/deploy/srv-xxx?key=yyy"
+          echo "  - Railway: railway up"
+          echo "  - Custom: docker compose -f docker-compose.prod.yml up -d"
+
+  # ------------------------------------------------------------------ #
+  # Job 7: Production Release (on version tags)                        #
+  # ------------------------------------------------------------------ #
+  production-release:
+    name: Production Release
+    runs-on: ubuntu-latest
+    needs: [backend-quality, frontend-quality, secret-detection, container-build, security-audit]
+    if: startsWith(github.ref, 'refs/tags/v')
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: KnowFlow AI ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+      - name: Production deployment
+        run: |
+          echo "Production deployment triggered for ${{ github.ref_name }}"
+          echo "Configure this step with your production deployment provider."
