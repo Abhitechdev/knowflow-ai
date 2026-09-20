@@ -16,21 +16,21 @@ export function Navigation() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-800/80 bg-zinc-950/70 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-border bg-surface-muted/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         {/* Brand */}
         <div className="flex items-center space-x-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-700/80 bg-zinc-900 text-zinc-100 shadow-inner">
-            <BookOpen className="h-5 w-5 text-indigo-400" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-text-primary shadow-inner">
+            <BookOpen className="h-5 w-5 text-accent" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-semibold tracking-tight text-zinc-100">KnowFlow AI</span>
-              <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
-                Phase 1 Verified
+              <span className="text-sm font-semibold tracking-tight text-text-primary">KnowFlow AI</span>
+              <span className="rounded-full border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success">
+                Gate 5E Verified
               </span>
             </div>
-            <p className="text-[11px] text-zinc-400 hidden sm:block">Enterprise Knowledge & SOP Agent</p>
+            <p className="text-[11px] text-text-muted hidden sm:block">Enterprise Knowledge & SOP Agent</p>
           </div>
         </div>
 
@@ -44,8 +44,8 @@ export function Navigation() {
                 href={item.href}
                 className={`group relative flex items-center space-x-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
                   item.active
-                    ? "bg-zinc-800/90 text-zinc-100 shadow-sm border border-zinc-700/60"
-                    : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
+                    ? "bg-surface text-text-primary shadow-sm border border-border"
+                    : "text-text-muted hover:bg-surface hover:text-text-primary"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" />
@@ -57,9 +57,9 @@ export function Navigation() {
 
         {/* User / Workspace indicator */}
         <div className="flex items-center space-x-2">
-          <div className="hidden sm:flex items-center space-x-2 rounded-md border border-zinc-800 bg-zinc-900/80 px-2.5 py-1 text-xs text-zinc-300">
-            <span className="h-2 w-2 rounded-full bg-zinc-500"></span>
-            <span>Default Workspace</span>
+          <div className="hidden sm:flex items-center space-x-2 rounded-md border border-border bg-surface px-2.5 py-1 text-xs text-text-muted">
+            <span className="h-2 w-2 rounded-full bg-text-muted"></span>
+            <span>Personal Workspace</span>
           </div>
         </div>
       </div>

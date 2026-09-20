@@ -27,6 +27,8 @@ import {
   ChatMessage,
   ConversationSummary,
 } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 function ChatContent() {
   const searchParams = useSearchParams();
@@ -154,22 +156,19 @@ function ChatContent() {
   return (
     <div className="max-w-6xl mx-auto flex gap-6 h-[calc(100vh-100px)]">
       {/* Conversations Sidebar */}
-      <div className="hidden lg:flex w-64 flex-col rounded-2xl border border-zinc-800/80 bg-zinc-950/60 p-3 space-y-3">
-        <button
-          onClick={handleNewChat}
-          className="w-full flex items-center justify-center space-x-2 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-medium text-white hover:bg-indigo-500 transition-colors shadow-sm"
-        >
-          <Plus className="h-3.5 w-3.5" />
+      <div className="hidden lg:flex w-64 flex-col rounded-2xl border border-border bg-surface-muted p-3 space-y-3">
+        <Button onClick={handleNewChat} className="w-full shadow-sm" size="sm">
+          <Plus className="h-3.5 w-3.5 mr-2" />
           <span>New Inquiry</span>
-        </button>
+        </Button>
 
-        <div className="text-[11px] font-medium text-zinc-500 px-2 uppercase tracking-wider">
+        <div className="text-[11px] font-medium text-text-muted px-2 uppercase tracking-wider">
           Recent Conversations
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-1 pr-1">
           {conversations.length === 0 ? (
-            <div className="p-4 text-center text-xs text-zinc-500">No past inquiries</div>
+            <div className="p-4 text-center text-xs text-text-muted">No past inquiries</div>
           ) : (
             conversations.map((c) => (
               <div
@@ -177,17 +176,17 @@ function ChatContent() {
                 onClick={() => loadConversation(c.id)}
                 className={`group flex items-center justify-between rounded-xl px-3 py-2 text-xs cursor-pointer transition-all ${
                   activeConvId === c.id
-                    ? "bg-zinc-800 text-white font-medium"
-                    : "text-zinc-400 hover:bg-zinc-900/60 hover:text-zinc-200"
+                    ? "bg-surface text-text-primary font-medium border border-border"
+                    : "text-text-muted hover:bg-surface-hover hover:text-text-primary"
                 }`}
               >
                 <div className="flex items-center space-x-2 truncate">
-                  <MessageSquare className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
+                  <MessageSquare className="h-3.5 w-3.5 shrink-0" />
                   <span className="truncate">{c.title}</span>
                 </div>
                 <button
                   onClick={(e) => handleDeleteConv(c.id, e)}
-                  className="opacity-0 group-hover:opacity-100 text-zinc-500 hover:text-red-400 p-1"
+                  className="opacity-0 group-hover:opacity-100 text-text-muted hover:text-danger p-1"
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
@@ -198,44 +197,46 @@ function ChatContent() {
       </div>
 
       {/* Main Chat Stream */}
-      <div className="flex-1 flex flex-col rounded-2xl border border-zinc-800/80 bg-zinc-950/40 overflow-hidden">
+      <div className="flex-1 flex flex-col rounded-2xl border border-border bg-surface overflow-hidden">
         {/* Chat Header */}
-        <div className="border-b border-zinc-800/80 px-5 py-3.5 flex items-center justify-between bg-zinc-950/80 backdrop-blur-sm">
+        <div className="border-b border-border px-5 py-3.5 flex items-center justify-between bg-surface/80 backdrop-blur-sm">
           <div className="flex items-center space-x-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-success/20 bg-success/10 text-success">
               <ShieldCheck className="h-4 w-4" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-xs font-semibold text-white">KnowFlow Assistant</h2>
-                <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.2 text-[9px] font-medium text-emerald-400">
+                <h2 className="text-xs font-semibold text-text-primary">KnowFlow Assistant</h2>
+                <span className="rounded-full border border-success/30 bg-success/10 px-2 py-0.5 text-[9px] font-medium text-success">
                   Grounded Answering Policy
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-400">
+              <p className="text-[11px] text-text-muted mt-0.5">
                 Only verified documentation used. Refuses when evidence is insufficient.
               </p>
             </div>
           </div>
 
-          <button
+          <Button
             onClick={handleNewChat}
-            className="lg:hidden rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-xs text-zinc-300"
+            variant="outline"
+            size="sm"
+            className="lg:hidden"
           >
             New
-          </button>
+          </Button>
         </div>
 
         {/* Message Thread */}
         <div className="flex-1 overflow-y-auto p-5 space-y-5">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-zinc-700/80 bg-zinc-900 text-indigo-400 shadow-inner">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-surface-muted text-accent shadow-inner">
                 <Bot className="h-6 w-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-zinc-200">KnowFlow Enterprise Assistant</h3>
-                <p className="text-xs text-zinc-400 max-w-md leading-relaxed">
+                <h3 className="text-sm font-semibold text-text-primary">KnowFlow Enterprise Assistant</h3>
+                <p className="text-xs text-text-muted max-w-md leading-relaxed">
                   Query standard operating procedures, clinical protocols, IT policies, and compliance manuals.
                   Every statement is substantiated by verified document citations.
                 </p>
@@ -244,30 +245,30 @@ function ChatContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-lg pt-2 text-left">
                 <button
                   onClick={() => handleSubmit(undefined, "What temperature range is required for cold chain storage?")}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-xs text-zinc-300 hover:border-indigo-500/40 hover:bg-zinc-900 transition-all flex items-start space-x-2 text-left"
+                  className="rounded-xl border border-border bg-surface-muted p-3 text-xs text-text-muted hover:border-border-hover hover:bg-surface-hover transition-all flex items-start space-x-2 text-left"
                 >
-                  <Sparkles className="h-3.5 w-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                  <Sparkles className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
                   <span>&ldquo;What temperature range is required for cold chain storage?&rdquo;</span>
                 </button>
                 <button
                   onClick={() => handleSubmit(undefined, "What is the deadline for reporting a critical deviation?")}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-xs text-zinc-300 hover:border-indigo-500/40 hover:bg-zinc-900 transition-all flex items-start space-x-2 text-left"
+                  className="rounded-xl border border-border bg-surface-muted p-3 text-xs text-text-muted hover:border-border-hover hover:bg-surface-hover transition-all flex items-start space-x-2 text-left"
                 >
-                  <Sparkles className="h-3.5 w-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                  <Sparkles className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
                   <span>&ldquo;What is the deadline for reporting a critical deviation?&rdquo;</span>
                 </button>
                 <button
                   onClick={() => handleSubmit(undefined, "What are the password complexity requirements?")}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-xs text-zinc-300 hover:border-indigo-500/40 hover:bg-zinc-900 transition-all flex items-start space-x-2 text-left"
+                  className="rounded-xl border border-border bg-surface-muted p-3 text-xs text-text-muted hover:border-border-hover hover:bg-surface-hover transition-all flex items-start space-x-2 text-left"
                 >
-                  <Sparkles className="h-3.5 w-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                  <Sparkles className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
                   <span>&ldquo;What are the password complexity requirements?&rdquo;</span>
                 </button>
                 <button
                   onClick={() => handleSubmit(undefined, "Who won the 2022 FIFA World Cup?")}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-3 text-xs text-zinc-400 hover:border-amber-500/40 hover:bg-zinc-900 transition-all flex items-start space-x-2 text-left"
+                  className="rounded-xl border border-border bg-surface-muted p-3 text-xs text-text-muted hover:border-warning/40 hover:bg-surface-hover transition-all flex items-start space-x-2 text-left"
                 >
-                  <AlertTriangle className="h-3.5 w-3.5 text-amber-400 shrink-0 mt-0.5" />
+                  <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0 mt-0.5" />
                   <span>&ldquo;Who won the 2022 FIFA World Cup?&rdquo; (Tests Refusal)</span>
                 </button>
               </div>
@@ -282,18 +283,18 @@ function ChatContent() {
                 <div
                   className={`max-w-2xl rounded-2xl p-4 text-xs leading-relaxed space-y-2 ${
                     m.sender_type === "USER"
-                      ? "bg-indigo-600 text-white rounded-br-none shadow-sm"
-                      : "bg-zinc-900/80 text-zinc-200 border border-zinc-800/80 rounded-bl-none shadow-sm"
+                      ? "bg-accent text-white rounded-br-none shadow-sm"
+                      : "bg-surface-muted text-text-primary border border-border rounded-bl-none shadow-sm"
                   }`}
                 >
                   {/* Assistant header banner */}
                   {m.sender_type === "ASSISTANT" && (
-                    <div className="flex items-center justify-between pb-1 border-b border-zinc-800/60 text-[10px] text-zinc-400">
-                      <div className="flex items-center space-x-1.5 text-emerald-400">
+                    <div className="flex items-center justify-between pb-1 border-b border-border text-[10px] text-text-muted">
+                      <div className="flex items-center space-x-1.5 text-success">
                         <ShieldCheck className="h-3 w-3" />
                         <span className="font-medium">Grounded Answering Policy</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-zinc-500">
+                      <div className="flex items-center space-x-1">
                         <Cpu className="h-2.5 w-2.5" />
                         <span>Verified Synthesis</span>
                       </div>
@@ -305,10 +306,10 @@ function ChatContent() {
 
                   {/* Verified Sources / Citations Drawer */}
                   {m.sources && m.sources.length > 0 && (
-                    <div className="mt-3 pt-2.5 border-t border-zinc-800/60 space-y-2">
+                    <div className="mt-3 pt-2.5 border-t border-border space-y-2">
                       <button
                         onClick={() => toggleSources(m.id)}
-                        className="flex items-center justify-between w-full text-[11px] font-medium text-indigo-400 hover:text-indigo-300"
+                        className="flex items-center justify-between w-full text-[11px] font-medium text-accent hover:underline"
                       >
                         <span className="flex items-center space-x-1.5">
                           <FileText className="h-3 w-3" />
@@ -326,18 +327,18 @@ function ChatContent() {
                           {m.sources.map((cit, idx) => (
                             <div
                               key={cit.id || idx}
-                              className="rounded-lg border border-zinc-800 bg-zinc-950/60 p-2.5 text-[11px] space-y-1"
+                              className="rounded-lg border border-border bg-surface p-2.5 text-[11px] space-y-1"
                             >
-                              <div className="flex items-center justify-between font-medium text-zinc-200">
+                              <div className="flex items-center justify-between font-medium text-text-primary">
                                 <span className="truncate">{cit.document_title}</span>
-                                <span className="text-zinc-500 font-normal">Page {cit.page_number}</span>
+                                <span className="text-text-muted font-normal">Page {cit.page_number}</span>
                               </div>
                               {cit.section_heading && (
-                                <div className="text-[10px] text-zinc-400 font-mono">
+                                <div className="text-[10px] text-text-muted font-mono">
                                   Section: {cit.section_heading}
                                 </div>
                               )}
-                              <div className="text-[11px] text-zinc-400 italic bg-zinc-900/40 p-1.5 rounded border border-zinc-850">
+                              <div className="text-[11px] text-text-muted italic bg-surface-muted p-1.5 rounded border border-border">
                                 &ldquo;{cit.relevant_text}&rdquo;
                               </div>
                             </div>
@@ -349,14 +350,14 @@ function ChatContent() {
 
                   {/* Assistant Footer & Feedback */}
                   {m.sender_type === "ASSISTANT" && (
-                    <div className="flex items-center justify-between pt-2 border-t border-zinc-800/40 text-[10px] text-zinc-500">
+                    <div className="flex items-center justify-between pt-2 border-t border-border text-[10px] text-text-muted">
                       <span>Was this verified answer helpful?</span>
                       <div className="flex items-center space-x-1.5">
                         <button
                           onClick={() => handleFeedback(m.id, 1)}
                           disabled={feedbackGiven[m.id] !== undefined}
-                          className={`p-1 rounded hover:bg-zinc-800 ${
-                            feedbackGiven[m.id] === 1 ? "text-emerald-400" : "text-zinc-400"
+                          className={`p-1 rounded hover:bg-surface ${
+                            feedbackGiven[m.id] === 1 ? "text-success" : ""
                           }`}
                         >
                           <ThumbsUp className="h-3 w-3" />
@@ -364,8 +365,8 @@ function ChatContent() {
                         <button
                           onClick={() => handleFeedback(m.id, -1)}
                           disabled={feedbackGiven[m.id] !== undefined}
-                          className={`p-1 rounded hover:bg-zinc-800 ${
-                            feedbackGiven[m.id] === -1 ? "text-red-400" : "text-zinc-400"
+                          className={`p-1 rounded hover:bg-surface ${
+                            feedbackGiven[m.id] === -1 ? "text-danger" : ""
                           }`}
                         >
                           <ThumbsDown className="h-3 w-3" />
@@ -379,8 +380,8 @@ function ChatContent() {
           )}
 
           {loading && (
-            <div className="flex items-center space-x-2 text-xs text-zinc-400 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800/60 w-fit">
-              <div className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
+            <div className="flex items-center space-x-2 text-xs text-text-muted bg-surface-muted p-3 rounded-xl border border-border w-fit">
+              <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
               <span>Searching authorized SOPs and evaluating grounding evidence...</span>
             </div>
           )}
@@ -388,23 +389,28 @@ function ChatContent() {
         </div>
 
         {/* Input Bar */}
-        <div className="border-t border-zinc-800/80 p-3.5 bg-zinc-950/80">
+        <div className="border-t border-border p-3.5 bg-surface-muted">
           <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-            <input
+            <Input
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder="Ask about SOP deviations, cold chain limits, leave guidelines, IT access..."
-              className="flex-1 rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-2.5 text-xs text-zinc-100 placeholder-zinc-500 focus:border-indigo-500/60 focus:bg-zinc-900 focus:outline-none focus:ring-1 focus:ring-indigo-500/30"
+              className="flex-1 h-11"
             />
-            <button
+            <Button
               type="submit"
               disabled={loading || !inputMessage.trim()}
-              className="rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-medium text-white hover:bg-indigo-500 disabled:opacity-40 flex items-center space-x-1.5 transition-colors"
+              className="h-11 px-4"
+              loading={loading}
             >
-              <span>Query</span>
-              <Send className="h-3.5 w-3.5" />
-            </button>
+              {!loading && (
+                <>
+                  <span>Query</span>
+                  <Send className="h-3.5 w-3.5 ml-1.5" />
+                </>
+              )}
+            </Button>
           </form>
         </div>
       </div>
@@ -414,7 +420,7 @@ function ChatContent() {
 
 export default function AskAIPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-xs text-zinc-400">Loading AI Assistant...</div>}>
+    <Suspense fallback={<div className="p-8 text-xs text-text-muted">Loading AI Assistant...</div>}>
       <ChatContent />
     </Suspense>
   );

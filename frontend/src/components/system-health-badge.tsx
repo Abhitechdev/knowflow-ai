@@ -27,22 +27,22 @@ export function SystemHealthBadge() {
   }, []);
 
   return (
-    <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-5 backdrop-blur-md">
-      <div className="flex items-center justify-between border-b border-zinc-800/60 pb-4">
+    <div className="rounded-xl border border-border bg-surface-muted/60 p-5 backdrop-blur-md">
+      <div className="flex items-center justify-between border-b border-border pb-4">
         <div className="flex items-center space-x-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-800 text-zinc-300">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface text-text-primary">
             <Activity className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-zinc-100">Backend Connectivity</h3>
-            <p className="text-xs text-zinc-400">Live probe to FastAPI /api/health</p>
+            <h3 className="text-sm font-medium text-text-primary">Backend Connectivity</h3>
+            <p className="text-xs text-text-muted">Live probe to FastAPI /api/health</p>
           </div>
         </div>
 
         <button
           onClick={checkHealth}
           disabled={loading}
-          className="inline-flex items-center space-x-1.5 rounded-md border border-zinc-700 bg-zinc-800/80 px-2.5 py-1 text-xs font-medium text-zinc-200 transition-colors hover:bg-zinc-700 disabled:opacity-50"
+          className="inline-flex items-center space-x-1.5 rounded-md border border-border bg-surface px-2.5 py-1 text-xs font-medium text-text-primary transition-colors hover:bg-surface-hover disabled:opacity-50"
         >
           <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
           <span>{loading ? "Probing..." : "Test Probe"}</span>
@@ -50,18 +50,18 @@ export function SystemHealthBadge() {
       </div>
 
       {loading && !health && !error ? (
-        <div className="py-6 text-center text-xs text-zinc-400 animate-pulse">
+        <div className="py-6 text-center text-xs text-text-muted animate-pulse">
           Connecting to backend service...
         </div>
       ) : error ? (
-        <div className="mt-4 rounded-lg border border-red-500/20 bg-red-950/20 p-3.5">
+        <div className="mt-4 rounded-lg border border-danger/20 bg-danger/10 p-3.5">
           <div className="flex items-start space-x-2.5">
-            <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
+            <AlertCircle className="h-4 w-4 text-danger mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs font-semibold text-red-300">Connection Failed</p>
-              <p className="text-xs text-red-400/90 mt-0.5">{error}</p>
-              <p className="text-[11px] text-zinc-400 mt-1.5">
-                Ensure the FastAPI backend is running on <code>http://localhost:8000</code>.
+              <p className="text-xs font-semibold text-danger">Connection Failed</p>
+              <p className="text-xs text-danger/90 mt-0.5">{error}</p>
+              <p className="text-[11px] text-text-muted mt-1.5">
+                Ensure the FastAPI backend is running at <code>{process.env.NEXT_PUBLIC_API_URL || "the configured API URL"}</code>.
               </p>
             </div>
           </div>
@@ -70,25 +70,25 @@ export function SystemHealthBadge() {
         <div className="mt-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {/* API Health */}
-            <div className="rounded-lg border border-zinc-800/80 bg-zinc-950/40 p-3">
-              <div className="flex items-center space-x-2 text-zinc-400">
+            <div className="rounded-lg border border-border bg-surface p-3">
+              <div className="flex items-center space-x-2 text-text-muted">
                 <Server className="h-3.5 w-3.5" />
                 <span className="text-[11px] font-medium uppercase tracking-wider">FastAPI Core</span>
               </div>
               <div className="mt-2 flex items-center space-x-2">
-                <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-                <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">
+                <span className="flex h-2 w-2 rounded-full bg-success animate-ping" />
+                <span className="text-xs font-semibold text-success uppercase tracking-wide">
                   {health.status}
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-500 mt-1">
+              <p className="text-[11px] text-text-muted mt-1">
                 v{health.version} • {latency}ms latency
               </p>
             </div>
 
             {/* Database Health */}
-            <div className="rounded-lg border border-zinc-800/80 bg-zinc-950/40 p-3">
-              <div className="flex items-center space-x-2 text-zinc-400">
+            <div className="rounded-lg border border-border bg-surface p-3">
+              <div className="flex items-center space-x-2 text-text-muted">
                 <Database className="h-3.5 w-3.5" />
                 <span className="text-[11px] font-medium uppercase tracking-wider">Database</span>
               </div>
@@ -96,57 +96,57 @@ export function SystemHealthBadge() {
                 <span
                   className={`flex h-2 w-2 rounded-full ${
                     health.database.connected
-                      ? "bg-emerald-400"
+                      ? "bg-success"
                       : health.database.status === "unconfigured"
-                      ? "bg-amber-400"
-                      : "bg-red-400"
+                      ? "bg-warning"
+                      : "bg-danger"
                   }`}
                 />
                 <span
                   className={`text-xs font-semibold uppercase tracking-wide ${
                     health.database.connected
-                      ? "text-emerald-400"
+                      ? "text-success"
                       : health.database.status === "unconfigured"
-                      ? "text-amber-400"
-                      : "text-red-400"
+                      ? "text-warning"
+                      : "text-danger"
                   }`}
                 >
                   {health.database.status}
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-500 mt-1 truncate" title={health.database.message}>
+              <p className="text-[11px] text-text-muted mt-1 truncate" title={health.database.message}>
                 {health.database.message || "PostgreSQL target"}
               </p>
             </div>
 
             {/* Auth Provider */}
-            <div className="rounded-lg border border-zinc-800/80 bg-zinc-950/40 p-3">
-              <div className="flex items-center space-x-2 text-zinc-400">
+            <div className="rounded-lg border border-border bg-surface p-3">
+              <div className="flex items-center space-x-2 text-text-muted">
                 <Shield className="h-3.5 w-3.5" />
                 <span className="text-[11px] font-medium uppercase tracking-wider">Auth Provider</span>
               </div>
               <div className="mt-2 flex items-center space-x-2">
                 <span
                   className={`flex h-2 w-2 rounded-full ${
-                    health.auth.configured ? "bg-emerald-400" : "bg-amber-400"
+                    health.auth.configured ? "bg-success" : "bg-warning"
                   }`}
                 />
                 <span
                   className={`text-xs font-semibold uppercase tracking-wide ${
-                    health.auth.configured ? "text-emerald-400" : "text-amber-400"
+                    health.auth.configured ? "text-success" : "text-warning"
                   }`}
                 >
                   {health.auth.configured ? "Configured" : "Unconfigured"}
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-500 mt-1 truncate">
+              <p className="text-[11px] text-text-muted mt-1 truncate">
                 {health.auth.provider} adapter
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-1">
-            <span>Environment: <strong className="text-zinc-400 font-mono">{health.environment}</strong></span>
+          <div className="flex items-center justify-between text-[11px] text-text-muted pt-1">
+            <span>Environment: <strong className="text-text-primary font-mono">{health.environment}</strong></span>
             <span>Last Probe: {new Date(health.timestamp).toLocaleTimeString()}</span>
           </div>
         </div>
