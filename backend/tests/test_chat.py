@@ -15,8 +15,9 @@ def test_chat_query_and_persistence(client: TestClient):
     assert "user_message_id" in data
     assert "assistant_message_id" in data
     assert data["policy_applied"] == "Grounded Answering Policy"
-    assert data["is_grounded"] is True
+    assert data["is_grounded"] is False
     assert isinstance(data["citations"], list)
+    assert len(data["citations"]) == 0
     conv_id = data["conversation_id"]
     asst_msg_id = data["assistant_message_id"]
 
