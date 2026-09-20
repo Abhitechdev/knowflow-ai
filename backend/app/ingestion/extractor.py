@@ -1,7 +1,8 @@
-import io
 import csv
+import io
 import logging
-from typing import List, Dict, Any
+from typing import Any
+
 from app.ingestion.cleaner import clean_text, detect_section_heading
 
 logger = logging.getLogger(__name__)
@@ -11,7 +12,7 @@ class DocumentExtractor:
     """Extracts structured text from supported file types (PDF, DOCX, TXT, MD, CSV) with page preservation."""
 
     @staticmethod
-    def extract(file_bytes: bytes, file_extension: str) -> List[Dict[str, Any]]:
+    def extract(file_bytes: bytes, file_extension: str) -> list[dict[str, Any]]:
         """Extracts content as a list of pages/sections.
         Each item is: {"page_number": int, "text": str, "section_heading": str}
         """
@@ -30,7 +31,7 @@ class DocumentExtractor:
             raise ValueError(f"Unsupported file extension: .{ext}")
 
     @staticmethod
-    def _extract_pdf(file_bytes: bytes) -> List[Dict[str, Any]]:
+    def _extract_pdf(file_bytes: bytes) -> list[dict[str, Any]]:
         import pypdf
         pages = []
         reader = pypdf.PdfReader(io.BytesIO(file_bytes))
@@ -69,13 +70,13 @@ class DocumentExtractor:
         return pages
 
     @staticmethod
-    def _extract_docx(file_bytes: bytes) -> List[Dict[str, Any]]:
+    def _extract_docx(file_bytes: bytes) -> list[dict[str, Any]]:
         import docx
         doc = docx.Document(io.BytesIO(file_bytes))
         pages = []
         current_page = 1
         current_heading = "General"
-        current_paras: List[str] = []
+        current_paras: list[str] = []
 
         for p in doc.paragraphs:
             text = clean_text(p.text)
@@ -107,7 +108,7 @@ class DocumentExtractor:
         return pages if pages else [{"page_number": 1, "text": "", "section_heading": "General"}]
 
     @staticmethod
-    def _extract_txt(file_bytes: bytes) -> List[Dict[str, Any]]:
+    def _extract_txt(file_bytes: bytes) -> list[dict[str, Any]]:
         try:
             content = file_bytes.decode("utf-8")
         except UnicodeDecodeError:
@@ -122,7 +123,7 @@ class DocumentExtractor:
         }]
 
     @staticmethod
-    def _extract_md(file_bytes: bytes) -> List[Dict[str, Any]]:
+    def _extract_md(file_bytes: bytes) -> list[dict[str, Any]]:
         try:
             content = file_bytes.decode("utf-8")
         except UnicodeDecodeError:
@@ -133,11 +134,11 @@ class DocumentExtractor:
         lines = cleaned.split("\n")
         sections = []
         current_heading = "Overview"
-        current_lines: List[str] = []
+        current_lines: list[str] = []
         page_num = 1
 
         for line in lines:
-            if line.startswith("# ") or line.startswith("## "):
+            if line.startswith(("# ", "## ")):
                 if current_lines:
                     sec_text = "\n".join(current_lines).strip()
                     if sec_text:
@@ -163,7 +164,7 @@ class DocumentExtractor:
         return sections if sections else [{"page_number": 1, "text": cleaned, "section_heading": "General"}]
 
     @staticmethod
-    def _extract_csv(file_bytes: bytes) -> List[Dict[str, Any]]:
+    def _extract_csv(file_bytes: bytes) -> list[dict[str, Any]]:
         try:
             text_stream = io.StringIO(file_bytes.decode("utf-8"))
         except UnicodeDecodeError:

@@ -1,7 +1,8 @@
 import asyncio
 import logging
-from typing import List
+
 from fastembed import TextEmbedding
+
 from app.embeddings.base import BaseEmbeddingProvider
 
 logger = logging.getLogger(__name__)
@@ -20,17 +21,17 @@ class LocalEmbeddingProvider(BaseEmbeddingProvider):
     def dimension(self) -> int:
         return self._dimension
 
-    def _sync_embed_texts(self, texts: List[str]) -> List[List[float]]:
+    def _sync_embed_texts(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
         embeddings_generator = self._model.embed(texts)
         return [list(emb) for emb in embeddings_generator]
 
-    async def embed_texts(self, texts: List[str]) -> List[List[float]]:
+    async def embed_texts(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
         return await asyncio.to_thread(self._sync_embed_texts, texts)
 
-    async def embed_query(self, text: str) -> List[float]:
+    async def embed_query(self, text: str) -> list[float]:
         results = await self.embed_texts([text])
         return results[0] if results else [0.0] * self._dimension

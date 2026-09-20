@@ -1,15 +1,14 @@
 import pytest
 from app.auth.context import UserContext
-from app.rag.base import RankedChunk, GroundingAssessment
+from app.rag.base import RankedChunk
+from app.rag.grounding import GroundingEvaluator
+from app.rag.llm import DeterministicLocalLLMProvider
 from app.rag.retrieval import (
+    HybridRetriever,
     compute_bm25_score,
     cosine_similarity,
     reciprocal_rank_fusion,
-    HybridRetriever,
 )
-from app.rag.grounding import GroundingEvaluator, POLICY_NAME
-from app.rag.llm import DeterministicLocalLLMProvider, RAGService
-from app.models.document import Document, DocumentChunk
 
 
 def test_dense_retrieval_cosine_similarity():
@@ -123,7 +122,7 @@ async def test_citation_verification_evidence():
     )
 
     query = "What is the deadline for reporting a critical deviation?"
-    answer, citations, tokens = await provider.generate_grounded_answer(query, [chunk])
+    answer, citations, _tokens = await provider.generate_grounded_answer(query, [chunk])
 
     # 1. Answer text must contain the factual evidence
     assert "within 24 hours" in answer

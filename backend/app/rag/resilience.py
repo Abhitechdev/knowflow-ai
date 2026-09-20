@@ -12,7 +12,6 @@ import asyncio
 import logging
 import random
 import time
-from typing import List, Optional, Tuple
 
 from app.rag.base import CitationItem, RankedChunk
 
@@ -21,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 class CircuitBreakerOpenException(Exception):
     """Raised when circuit breaker is tripped open to fail fast."""
-    pass
 
 
 class ResilientLLMInvoker:
@@ -72,24 +70,23 @@ class ResilientLLMInvoker:
         self,
         primary_provider,
         query: str,
-        chunks: List[RankedChunk],
+        chunks: list[RankedChunk],
         secondary_provider=None,
-    ) -> Tuple[str, List[CitationItem], int, str]:
+    ) -> tuple[str, list[CitationItem], int, str]:
         """Executes LLM generation with retry -> secondary provider -> safe structured refusal.
         Returns: (answer_text, citations, tokens_used, provider_status)
         """
         if self.is_circuit_open():
             logger.error("Circuit breaker is OPEN. Failing fast to safe refusal.")
             return (
-                "The AI generation service is temporarily unavailable due to high error rates. "
-                "Please retry in a few moments.",
+                ("The AI generation service is temporarily unavailable due to high error rates. "
+                "Please retry in a few moments."),
                 [],
                 0,
                 "CIRCUIT_BREAKER_OPEN",
             )
 
         # Attempt Primary Provider with Retries
-        last_error = None
         for attempt in range(1, self.max_retries + 1):
             try:
                 # Wrap with timeout
@@ -102,7 +99,6 @@ class ResilientLLMInvoker:
                 return answer, citations, tokens, "PRIMARY_SUCCESS"
 
             except Exception as e:
-                last_error = e
                 logger.warning(f"Primary LLM provider attempt {attempt}/{self.max_retries} failed: {e}")
                 if attempt < self.max_retries:
                     jitter = random.uniform(0.1, 0.3)

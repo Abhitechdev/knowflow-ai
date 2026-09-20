@@ -1,5 +1,6 @@
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.db.base import Base, CommonMixin
 
 

@@ -1,8 +1,7 @@
 """Unit tests for Phase 4 LLM Resilience: Retry, Secondary Provider Fallback & Circuit Breaker."""
 
-import asyncio
 import pytest
-from app.rag.base import CitationItem, RankedChunk
+from app.rag.base import CitationItem
 from app.rag.resilience import ResilientLLMInvoker
 
 
@@ -33,7 +32,7 @@ async def test_retry_on_transient_failure():
     invoker = ResilientLLMInvoker(max_retries=3, base_delay_seconds=0.01, timeout_seconds=2.0)
     provider = MockFailingProvider(fail_count=2)
 
-    answer, citations, tokens, status = await invoker.invoke_with_resilience(
+    answer, _citations, _tokens, status = await invoker.invoke_with_resilience(
         primary_provider=provider,
         query="Test query",
         chunks=[],
@@ -50,7 +49,7 @@ async def test_fallback_to_secondary_provider():
     primary = MockPermanentFailProvider()
     secondary = MockSuccessfulProvider()
 
-    answer, citations, tokens, status = await invoker.invoke_with_resilience(
+    answer, _citations, _tokens, status = await invoker.invoke_with_resilience(
         primary_provider=primary,
         query="Test query",
         chunks=[],
@@ -67,7 +66,7 @@ async def test_safe_structured_refusal_when_all_fail():
     primary = MockPermanentFailProvider()
     secondary = MockPermanentFailProvider()
 
-    answer, citations, tokens, status = await invoker.invoke_with_resilience(
+    answer, citations, _tokens, status = await invoker.invoke_with_resilience(
         primary_provider=primary,
         query="Test query",
         chunks=[],
@@ -99,5 +98,5 @@ async def test_circuit_breaker_trips_open():
     assert invoker.is_circuit_open() is True
 
     # Immediate next attempt fails fast with CIRCUIT_BREAKER_OPEN
-    ans, cits, toks, status = await invoker.invoke_with_resilience(primary, "q3", [])
+    _ans, _cits, _toks, status = await invoker.invoke_with_resilience(primary, "q3", [])
     assert status == "CIRCUIT_BREAKER_OPEN"

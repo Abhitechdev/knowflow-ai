@@ -5,21 +5,21 @@ and section heading alignment.
 """
 
 import re
-from typing import List, Sequence
+
 from app.rag.base import RankedChunk
 
 
 class BaseReranker:
     """Abstract interface for Stage 2 rerankers."""
 
-    def rerank(self, query: str, chunks: List[RankedChunk], top_k: int = 4) -> List[RankedChunk]:
+    def rerank(self, query: str, chunks: list[RankedChunk], top_k: int = 4) -> list[RankedChunk]:
         raise NotImplementedError
 
 
 class NoOpReranker(BaseReranker):
     """Pass-through reranker returning top_k chunks without modification."""
 
-    def rerank(self, query: str, chunks: List[RankedChunk], top_k: int = 4) -> List[RankedChunk]:
+    def rerank(self, query: str, chunks: list[RankedChunk], top_k: int = 4) -> list[RankedChunk]:
         return chunks[:top_k]
 
 
@@ -43,7 +43,7 @@ class HybridReranker(BaseReranker):
         self.coverage_weight = coverage_weight
         self.spec_weight = spec_weight
 
-    def rerank(self, query: str, chunks: List[RankedChunk], top_k: int = 4) -> List[RankedChunk]:
+    def rerank(self, query: str, chunks: list[RankedChunk], top_k: int = 4) -> list[RankedChunk]:
         if not chunks:
             return []
 
@@ -51,7 +51,7 @@ class HybridReranker(BaseReranker):
         query_terms = set(re.findall(r"\b[a-zA-Z0-9_\-\.]{3,}\b", query_clean))
         query_numbers = set(re.findall(r"\b\d+(?:\.\d+)?\b", query_clean))
 
-        scored_chunks: List[tuple[float, RankedChunk]] = []
+        scored_chunks: list[tuple[float, RankedChunk]] = []
 
         for chunk in chunks:
             heading_text = (chunk.section_heading or "").lower()

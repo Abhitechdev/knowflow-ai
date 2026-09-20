@@ -1,9 +1,10 @@
 """Unit tests for Phase 4 Sliding Window Rate Limiter."""
 
 import time
+
 import pytest
-from fastapi import HTTPException
 from app.security.rate_limiter import SlidingWindowRateLimiter
+from fastapi import HTTPException
 
 
 def test_sliding_window_rate_limiter_allows_up_to_max():

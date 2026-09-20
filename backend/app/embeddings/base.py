@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List
 
 
 class BaseEmbeddingProvider(ABC):
@@ -9,14 +8,11 @@ class BaseEmbeddingProvider(ABC):
     @abstractmethod
     def dimension(self) -> int:
         """Returns the embedding vector dimension."""
-        pass
 
     @abstractmethod
-    async def embed_texts(self, texts: List[str]) -> List[List[float]]:
+    async def embed_texts(self, texts: list[str]) -> list[list[float]]:
         """Generates embeddings for a list of text chunks."""
-        pass
 
     @abstractmethod
-    async def embed_query(self, text: str) -> List[float]:
+    async def embed_query(self, text: str) -> list[float]:
         """Generates an embedding for a search query string."""
-        pass

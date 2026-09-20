@@ -1,6 +1,8 @@
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
+
 import httpx
+
 from app.auth.base import AuthProvider, AuthUser
 from app.core.config import settings
 
@@ -19,7 +21,7 @@ class SupabaseAuthProvider(AuthProvider):
     def is_configured(self) -> bool:
         return bool(self.supabase_url and (self.anon_key or self.service_role_key))
 
-    async def verify_token(self, token: str) -> Optional[AuthUser]:
+    async def verify_token(self, token: str) -> AuthUser | None:
         if not self.is_configured or not token:
             return None
 
@@ -46,7 +48,7 @@ class SupabaseAuthProvider(AuthProvider):
             logger.warning(f"Supabase token verification error: {exc}")
         return None
 
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         if not self.is_configured:
             return {
                 "provider": "supabase",
@@ -60,7 +62,7 @@ class SupabaseAuthProvider(AuthProvider):
         }
 
 
-_auth_provider: Optional[AuthProvider] = None
+_auth_provider: AuthProvider | None = None
 
 
 def get_auth_provider() -> AuthProvider:

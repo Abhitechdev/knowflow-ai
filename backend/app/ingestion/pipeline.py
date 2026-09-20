@@ -1,15 +1,16 @@
+import logging
 import os
 import re
 import uuid
-import logging
-from typing import Tuple
-from sqlalchemy import select, delete
+
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.embeddings import get_embedding_provider
+from app.ingestion.chunker import document_chunker
+from app.ingestion.extractor import document_extractor
 from app.models.document import Document, DocumentChunk
 from app.storage.service import storage_service
-from app.ingestion.extractor import document_extractor
-from app.ingestion.chunker import document_chunker
-from app.embeddings import get_embedding_provider
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ def sanitize_filename(filename: str) -> str:
     return cleaned or "document"
 
 
-def validate_file(filename: str, content_type: str, file_size: int) -> Tuple[bool, str, str]:
+def validate_file(filename: str, content_type: str, file_size: int) -> tuple[bool, str, str]:
     """Validates file extension, size, and returns (is_valid, error_msg, sanitized_ext)."""
     if not filename:
         return False, "Filename is required.", ""
@@ -120,4 +121,4 @@ async def process_document_pipeline(document_id: str, db: AsyncSession) -> Docum
         document.error_message = str(e)[:500]
         await db.commit()
         await db.refresh(document)
-        raise e
+        raise

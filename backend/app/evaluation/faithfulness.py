@@ -4,14 +4,15 @@ False Positives (in-scope refused) and False Negatives (out-of-scope answered).
 """
 
 import re
-from typing import List, Sequence, Tuple
+from collections.abc import Sequence
+
 from pydantic import BaseModel
 
 
 class SentenceVerification(BaseModel):
     sentence: str
     is_supported: bool
-    matching_keywords: List[str]
+    matching_keywords: list[str]
     overlap_ratio: float
 
 
@@ -20,13 +21,13 @@ class FaithfulnessResult(BaseModel):
     faithfulness_score: float  # Supported sentences / total sentences
     supported_sentences: int
     total_sentences: int
-    sentence_verifications: List[SentenceVerification]
+    sentence_verifications: list[SentenceVerification]
     is_refusal: bool
     is_false_positive: bool  # Valid in-scope question erroneously refused
     is_false_negative: bool  # Out-of-scope question answered without refusal
 
 
-def split_sentences(text: str) -> List[str]:
+def split_sentences(text: str) -> list[str]:
     """Splits response text into clean, non-trivial claim statements,
     avoiding false splits on decimal points or section numbers.
     """
@@ -57,7 +58,6 @@ def evaluate_faithfulness(
     is_refusal = not is_grounded or "REFUSED" in grounding_status.upper()
 
     # Track classification errors
-    is_false_positive = False
     is_false_negative = False
 
     if is_out_of_scope:
@@ -78,7 +78,6 @@ def evaluate_faithfulness(
     # In-scope question
     if is_refusal:
         # In-scope question was erroneously refused: FALSE POSITIVE
-        is_false_positive = True
         return FaithfulnessResult(
             is_faithful=False,
             faithfulness_score=0.0,
@@ -106,7 +105,7 @@ def evaluate_faithfulness(
     combined_context = " ".join(context_excerpts).lower()
     context_tokens = set(re.findall(r"\b[a-zA-Z0-9_\-\.]{3,}\b", combined_context))
 
-    verifications: List[SentenceVerification] = []
+    verifications: list[SentenceVerification] = []
     supported_count = 0
 
     for sentence in sentences:

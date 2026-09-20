@@ -1,7 +1,7 @@
 import logging
-from typing import List
-from app.embeddings.base import BaseEmbeddingProvider
+
 from app.core.config import settings
+from app.embeddings.base import BaseEmbeddingProvider
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class OpenAIEmbeddingProvider(BaseEmbeddingProvider):
     def dimension(self) -> int:
         return self._dimension
 
-    async def embed_texts(self, texts: List[str]) -> List[List[float]]:
+    async def embed_texts(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
         response = await self.client.embeddings.create(
@@ -33,6 +33,6 @@ class OpenAIEmbeddingProvider(BaseEmbeddingProvider):
         )
         return [item.embedding for item in response.data]
 
-    async def embed_query(self, text: str) -> List[float]:
+    async def embed_query(self, text: str) -> list[float]:
         results = await self.embed_texts([text])
         return results[0] if results else [0.0] * self._dimension

@@ -1,12 +1,14 @@
 import logging
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.api.router import api_router
 from app.core.config import settings
-from app.core.sentry import init_sentry
 from app.core.security_headers import SecurityHeadersMiddleware
+from app.core.sentry import init_sentry
 from app.db.session import check_database_health
 
 logging.basicConfig(

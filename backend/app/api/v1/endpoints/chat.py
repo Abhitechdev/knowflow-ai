@@ -1,27 +1,26 @@
-import uuid
 import logging
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select, desc
-from sqlalchemy.orm import selectinload
-from sqlalchemy.ext.asyncio import AsyncSession
+import uuid
 
 from app.auth.context import UserContext, get_current_user_context
 from app.db.session import get_db
 from app.models.chat import Conversation, Message, MessageSource
-from app.models.feedback import Feedback
 from app.models.document import Document
+from app.models.feedback import Feedback
 from app.rag.llm import RAGService
 from app.schemas.chat import (
     ChatQueryRequest,
     ChatQueryResponse,
     CitationRead,
-    ConversationRead,
     ConversationDetailRead,
-    MessageRead,
+    ConversationRead,
     FeedbackCreateRequest,
     FeedbackReadResponse,
+    MessageRead,
 )
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import desc, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +95,7 @@ async def query_knowledge_base(
     db.add(asst_message)
     await db.flush()
 
-    citation_reads: List[CitationRead] = []
+    citation_reads: list[CitationRead] = []
     for cit in rag_res.citations:
         source_id = str(uuid.uuid4())
         source_record = MessageSource(
@@ -144,7 +143,7 @@ async def query_knowledge_base(
     )
 
 
-@router.get("/conversations", response_model=List[ConversationRead])
+@router.get("/conversations", response_model=list[ConversationRead])
 async def list_conversations(
     user_context: UserContext = Depends(get_current_user_context),
     db: AsyncSession = Depends(get_db),
@@ -277,7 +276,6 @@ async def delete_conversation(
 
     await db.delete(conv)
     await db.commit()
-    return None
 
 
 @router.post("/feedback", response_model=FeedbackReadResponse, status_code=status.HTTP_201_CREATED)

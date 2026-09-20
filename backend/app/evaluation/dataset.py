@@ -2,7 +2,7 @@
 Contains verified SOP test cases and adversarial out-of-scope queries.
 """
 
-from typing import List, Optional
+
 from pydantic import BaseModel
 
 
@@ -10,14 +10,14 @@ class BenchmarkCase(BaseModel):
     id: str
     question: str
     category: str  # "COLD_CHAIN", "DEVIATION", "HR_POLICY", "IT_SECURITY", "ADVERSARIAL_OUT_OF_SCOPE"
-    expected_doc_title: Optional[str] = None
-    expected_page: Optional[int] = None
-    expected_keywords: List[str] = []
-    ground_truth_answer: Optional[str] = None
+    expected_doc_title: str | None = None
+    expected_page: int | None = None
+    expected_keywords: list[str] = []
+    ground_truth_answer: str | None = None
     is_out_of_scope: bool = False
 
 
-GOLDEN_BENCHMARK_CASES: List[BenchmarkCase] = [
+GOLDEN_BENCHMARK_CASES: list[BenchmarkCase] = [
     # --- Category: COLD_CHAIN (CLIN-SOP-009) ---
     BenchmarkCase(
         id="case-cold-001",

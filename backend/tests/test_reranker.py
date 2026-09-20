@@ -1,6 +1,5 @@
 """Unit tests for Stage 2 HybridReranker and QueryRewriter."""
 
-import pytest
 from app.rag.base import RankedChunk
 from app.rag.reranker import HybridReranker, NoOpReranker
 from app.rag.rewriter import MessageContext, QueryRewriter

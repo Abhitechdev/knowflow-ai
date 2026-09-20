@@ -1,8 +1,8 @@
 import logging
 import math
 import re
-from typing import List, Dict, Optional, Tuple
-from sqlalchemy import select, and_, or_
+
+from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.context import UserContext
@@ -13,7 +13,7 @@ from app.rag.base import RankedChunk, RetrievalResult
 logger = logging.getLogger(__name__)
 
 
-def _tokenize(text: str) -> List[str]:
+def _tokenize(text: str) -> list[str]:
     """Tokenize and normalize text into lowercase terms."""
     return re.findall(r"\b\w+\b", text.lower())
 
@@ -30,7 +30,7 @@ STOPWORDS = {
 
 
 def compute_bm25_score(
-    query_terms: List[str],
+    query_terms: list[str],
     doc_text: str,
     doc_len: int,
     avg_dl: float,
@@ -50,7 +50,7 @@ def compute_bm25_score(
     if not doc_terms:
         return 0.0
 
-    term_freq: Dict[str, int] = {}
+    term_freq: dict[str, int] = {}
     for term in doc_terms:
         term_freq[term] = term_freq.get(term, 0) + 1
 
@@ -65,7 +65,7 @@ def compute_bm25_score(
     return score
 
 
-def cosine_similarity(v1: List[float], v2: List[float]) -> float:
+def cosine_similarity(v1: list[float], v2: list[float]) -> float:
     """Calculates cosine similarity between two float vectors."""
     if not v1 or not v2 or len(v1) != len(v2):
         return 0.0
@@ -78,17 +78,17 @@ def cosine_similarity(v1: List[float], v2: List[float]) -> float:
 
 
 def reciprocal_rank_fusion(
-    dense_ranked: List[RankedChunk],
-    sparse_ranked: List[RankedChunk],
+    dense_ranked: list[RankedChunk],
+    sparse_ranked: list[RankedChunk],
     k: int = 60,
     dense_weight: float = 0.6,
     sparse_weight: float = 0.4,
-) -> List[RankedChunk]:
+) -> list[RankedChunk]:
     """Fuses dense and sparse rankings using Reciprocal Rank Fusion (RRF).
     Formula: RRF(d) = dense_weight / (k + rank_dense) + sparse_weight / (k + rank_sparse)
     """
-    scores: Dict[str, float] = {}
-    chunk_map: Dict[str, RankedChunk] = {}
+    scores: dict[str, float] = {}
+    chunk_map: dict[str, RankedChunk] = {}
 
     for rank, chunk in enumerate(dense_ranked, start=1):
         chunk_map[chunk.chunk_id] = chunk
@@ -99,7 +99,7 @@ def reciprocal_rank_fusion(
             chunk_map[chunk.chunk_id] = chunk
         scores[chunk.chunk_id] = scores.get(chunk.chunk_id, 0.0) + (sparse_weight / (k + rank))
 
-    fused_chunks: List[RankedChunk] = []
+    fused_chunks: list[RankedChunk] = []
     for chunk_id, rrf_score in sorted(scores.items(), key=lambda item: item[1], reverse=True):
         chunk = chunk_map[chunk_id]
         chunk.rrf_score = round(rrf_score, 5)
@@ -163,7 +163,7 @@ class HybridRetriever:
         query: str,
         user_context: UserContext,
         db: AsyncSession,
-        department_filter: Optional[str] = None,
+        department_filter: str | None = None,
     ) -> RetrievalResult:
         """Executes hybrid retrieval enforcing server-side authorization."""
         query = query.strip()
@@ -200,8 +200,8 @@ class HybridRetriever:
             logger.warning(f"Failed to generate query embedding: {e}")
             query_embedding = None
 
-        dense_candidates: List[RankedChunk] = []
-        sparse_candidates: List[RankedChunk] = []
+        dense_candidates: list[RankedChunk] = []
+        sparse_candidates: list[RankedChunk] = []
 
         query_terms = _tokenize(query)
         avg_doc_len = sum(len(_tokenize(chunk.content)) for chunk, _ in rows) / max(len(rows), 1)

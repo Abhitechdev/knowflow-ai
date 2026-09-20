@@ -1,9 +1,9 @@
 import pytest
+from app.embeddings import get_embedding_provider
+from app.ingestion.chunker import document_chunker
 from app.ingestion.cleaner import clean_text, detect_section_heading
 from app.ingestion.extractor import document_extractor
-from app.ingestion.chunker import document_chunker
-from app.ingestion.pipeline import validate_file, sanitize_filename
-from app.embeddings import get_embedding_provider
+from app.ingestion.pipeline import sanitize_filename, validate_file
 
 
 def test_clean_text():

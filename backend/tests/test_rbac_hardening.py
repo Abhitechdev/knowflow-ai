@@ -1,6 +1,5 @@
 """Unit tests for Phase 4 Granular RBAC and Document Clearance Hardening."""
 
-import pytest
 from app.auth.context import UserContext
 from app.rag.retrieval import HybridRetriever
 

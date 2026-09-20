@@ -1,7 +1,9 @@
 from datetime import datetime
-from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, String, Text
+
 from pgvector.sqlalchemy import Vector
+from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.db.base import Base, CommonMixin, utc_now
 
 

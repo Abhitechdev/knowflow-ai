@@ -1,24 +1,34 @@
-import uuid
 import logging
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, BackgroundTasks, status
-from sqlalchemy import select, func, desc
-from sqlalchemy.ext.asyncio import AsyncSession
+import uuid
+
 from app.db.session import get_db, get_session_factory
+from app.ingestion.pipeline import (
+    process_document_pipeline,
+    sanitize_filename,
+    validate_file,
+)
 from app.models.document import Document, DocumentChunk
 from app.schemas.document import (
-    DocumentRead,
-    DocumentDetailRead,
     DocumentChunkRead,
+    DocumentDetailRead,
     DocumentListResponse,
+    DocumentRead,
     DocumentUploadResponse,
 )
 from app.storage.service import storage_service
-from app.ingestion.pipeline import (
-    validate_file,
-    sanitize_filename,
-    process_document_pipeline,
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
 )
+from sqlalchemy import desc, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +55,8 @@ async def _run_pipeline_in_background(document_id: str):
 async def upload_document(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    title: Optional[str] = Form(None),
-    department_id: Optional[str] = Form(None),
+    title: str | None = Form(None),
+    department_id: str | None = Form(None),
     access_level: str = Form("WORKSPACE"),
     db: AsyncSession = Depends(get_db),
 ):
@@ -75,7 +85,7 @@ async def upload_document(
         logger.exception(f"Supabase Storage upload failed: {exc}")
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Storage upload error: {str(exc)}",
+            detail=f"Storage upload error: {exc!s}",
         )
 
     # 5. Create database record
@@ -112,9 +122,9 @@ async def upload_document(
 async def list_documents(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
-    status: Optional[str] = Query(None),
-    department_id: Optional[str] = Query(None),
-    search: Optional[str] = Query(None),
+    status: str | None = Query(None),
+    department_id: str | None = Query(None),
+    search: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
 ):
     """Lists real ingested documents from the database with pagination, filters, and chunk counts."""
@@ -153,7 +163,7 @@ async def list_documents(
         for d_id, c_count in chunk_res.all():
             chunk_counts[d_id] = c_count
 
-    items: List[DocumentRead] = []
+    items: list[DocumentRead] = []
     for d in documents:
         dr = DocumentRead.model_validate(d)
         dr.total_chunks = chunk_counts.get(d.id, 0)
@@ -237,7 +247,6 @@ async def delete_document(
     # Delete from DB
     await db.delete(document)
     await db.commit()
-    return None
 
 
 @router.post("/{document_id}/retry", response_model=DocumentRead)

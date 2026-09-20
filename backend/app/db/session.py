@@ -1,5 +1,8 @@
 import logging
-from typing import Any, AsyncGenerator, Dict, Optional
+from collections.abc import AsyncGenerator
+from typing import Any
+
+from app.core.config import settings
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -7,16 +10,15 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 # Global engine and session factory
-_engine: Optional[AsyncEngine] = None
-_session_factory: Optional[async_sessionmaker[AsyncSession]] = None
+_engine: AsyncEngine | None = None
+_session_factory: async_sessionmaker[AsyncSession] | None = None
 
 
-def get_engine() -> Optional[AsyncEngine]:
+def get_engine() -> AsyncEngine | None:
     """Returns async SQLAlchemy engine if DATABASE_URL is configured."""
     global _engine, _session_factory
     if _engine is not None:
@@ -53,7 +55,7 @@ def get_engine() -> Optional[AsyncEngine]:
         return None
 
 
-def get_session_factory() -> Optional[async_sessionmaker[AsyncSession]]:
+def get_session_factory() -> async_sessionmaker[AsyncSession] | None:
     """Returns the async sessionmaker factory."""
     get_engine()
     return _session_factory
@@ -72,7 +74,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
-async def check_database_health() -> Dict[str, Any]:
+async def check_database_health() -> dict[str, Any]:
     """Checks DB connectivity without crashing if unconfigured."""
     if not settings.DATABASE_URL.strip():
         return {

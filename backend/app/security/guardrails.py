@@ -4,14 +4,14 @@ and context boundary manipulation.
 """
 
 import re
-from typing import List, Optional, Tuple
+
 from pydantic import BaseModel
 
 
 class InjectionDetectionResult(BaseModel):
     is_safe: bool
     sanitized_text: str
-    flagged_patterns: List[str]
+    flagged_patterns: list[str]
     threat_level: str  # "NONE", "LOW", "MEDIUM", "HIGH"
 
 
@@ -56,7 +56,7 @@ class PromptInjectionGuard:
 
     def inspect_query(self, query: str) -> InjectionDetectionResult:
         """Inspects query text against known injection patterns and returns threat status."""
-        flagged: List[str] = []
+        flagged: list[str] = []
         highest_threat = "NONE"
 
         # Check raw query for delimiters, tags, and instruction overrides

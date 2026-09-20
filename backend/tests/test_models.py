@@ -1,7 +1,6 @@
-import pytest
-from app.db.base import Base
 # Import models so they register in Base.metadata
-import app.models  # noqa: F401
+import app.models
+from app.db.base import Base
 
 
 def test_schema_tables_registered():

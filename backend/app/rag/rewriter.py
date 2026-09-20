@@ -4,11 +4,10 @@ Disambiguates conversational follow-up questions and expands domain acronyms
 """
 
 import re
-from typing import Dict, List, Optional
+
 from pydantic import BaseModel
 
-
-ACRONYM_MAP: Dict[str, str] = {
+ACRONYM_MAP: dict[str, str] = {
     "sop": "standard operating procedure",
     "rca": "root cause analysis",
     "capa": "corrective and preventive action",
@@ -43,7 +42,7 @@ class MessageContext(BaseModel):
 class QueryRewriter:
     """Expands domain terminology and resolves multi-turn conversational references."""
 
-    def __init__(self, acronym_map: Optional[Dict[str, str]] = None):
+    def __init__(self, acronym_map: dict[str, str] | None = None):
         self.acronym_map = acronym_map or ACRONYM_MAP
 
     def expand_acronyms(self, query: str) -> str:
@@ -59,7 +58,7 @@ class QueryRewriter:
         return " ".join(expanded_parts)
 
     def rewrite_query(
-        self, query: str, conversation_history: Optional[List[MessageContext]] = None
+        self, query: str, conversation_history: list[MessageContext] | None = None
     ) -> str:
         """Rewrites elliptical/pronoun-heavy queries using prior conversation context."""
         query_clean = query.strip()

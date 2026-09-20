@@ -5,7 +5,7 @@ Initializes only when SENTRY_DSN is set. Scrubs PII fields (user queries,
 document content) from event payloads before transmission.
 """
 import logging
-from typing import Any, Dict
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ _SCRUB_KEYS = frozenset({
 })
 
 
-def _scrub_event(event: Dict[str, Any], hint: Dict[str, Any]) -> Dict[str, Any]:
+def _scrub_event(event: dict[str, Any], hint: dict[str, Any]) -> dict[str, Any]:
     """Strip PII / document content from Sentry event payloads."""
     def _redact(obj: Any) -> Any:
         if isinstance(obj, dict):
@@ -44,7 +44,7 @@ def init_sentry(dsn: str, environment: str, release: str) -> None:
         return
 
     try:
-        import sentry_sdk  # noqa: PLC0415
+        import sentry_sdk
 
         sentry_sdk.init(
             dsn=dsn,

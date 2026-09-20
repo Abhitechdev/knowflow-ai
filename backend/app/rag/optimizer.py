@@ -4,8 +4,9 @@ deduplication, and fine-grained latency timing spans.
 """
 
 import re
-from typing import Dict, List, Optional
+
 from pydantic import BaseModel
+
 from app.rag.base import RankedChunk
 
 
@@ -18,7 +19,7 @@ class PipelineTimings(BaseModel):
     t_llm_ms: float = 0.0
     t_total_ms: float = 0.0
 
-    def to_dict(self) -> Dict[str, float]:
+    def to_dict(self) -> dict[str, float]:
         return {
             "t_embed_ms": round(self.t_embed_ms, 2),
             "t_dense_ms": round(self.t_dense_ms, 2),
@@ -41,12 +42,12 @@ class ContextBudgetManager:
         """Heuristic token estimation (~4 chars per token)."""
         return max(1, len(text) // 4)
 
-    def optimize_chunks(self, chunks: List[RankedChunk]) -> List[RankedChunk]:
+    def optimize_chunks(self, chunks: list[RankedChunk]) -> list[RankedChunk]:
         """Deduplicates overlapping content and trims chunks to fit within the token budget."""
         if not chunks:
             return []
 
-        optimized: List[RankedChunk] = []
+        optimized: list[RankedChunk] = []
         seen_sentences = set()
         accumulated_tokens = 0
 

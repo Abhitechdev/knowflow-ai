@@ -1,6 +1,8 @@
 import logging
-from typing import Optional, Dict, Any
+from typing import Any
+
 import httpx
+
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -14,7 +16,7 @@ class SupabaseStorageService:
         self.service_key = settings.SUPABASE_SERVICE_ROLE_KEY
         self.bucket = settings.STORAGE_BUCKET
 
-    def _headers(self, content_type: Optional[str] = None) -> Dict[str, str]:
+    def _headers(self, content_type: str | None = None) -> dict[str, str]:
         h = {
             "Authorization": f"Bearer {self.service_key}",
             "apikey": self.service_key,
@@ -29,7 +31,7 @@ class SupabaseStorageService:
         destination_path: str,
         content_type: str = "application/octet-stream",
         upsert: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Uploads a file to the configured private Supabase Storage bucket."""
         url = f"{self.base_url}/storage/v1/object/{self.bucket}/{destination_path.lstrip('/')}"
         headers = self._headers(content_type)
@@ -73,7 +75,7 @@ class SupabaseStorageService:
                 return False
             return True
 
-    async def get_signed_url(self, file_path: str, expires_in: int = 3600) -> Optional[str]:
+    async def get_signed_url(self, file_path: str, expires_in: int = 3600) -> str | None:
         """Generates a secure temporary signed URL to download or view a private file."""
         url = f"{self.base_url}/storage/v1/object/sign/{self.bucket}/{file_path.lstrip('/')}"
         headers = self._headers(content_type="application/json")

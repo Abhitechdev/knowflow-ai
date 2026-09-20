@@ -1,24 +1,23 @@
-import time
 import logging
 import re
+import time
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple
 
 import httpx
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.context import UserContext
 from app.core.config import settings
 from app.rag.base import (
-    RankedChunk,
     CitationItem,
     GroundingAssessment,
     RAGResponse,
+    RankedChunk,
 )
-from app.rag.grounding import GroundingEvaluator, POLICY_NAME
+from app.rag.grounding import POLICY_NAME, GroundingEvaluator
 from app.rag.retrieval import HybridRetriever
-from app.rag.rewriter import QueryRewriter, MessageContext
+from app.rag.rewriter import MessageContext, QueryRewriter
 from app.security.guardrails import PromptInjectionGuard
-from app.auth.context import UserContext
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -39,10 +38,9 @@ class BaseLLMProvider(ABC):
     async def generate_grounded_answer(
         self,
         query: str,
-        chunks: List[RankedChunk],
-    ) -> Tuple[str, List[CitationItem], int]:
+        chunks: list[RankedChunk],
+    ) -> tuple[str, list[CitationItem], int]:
         """Generates a grounded answer with exact supporting citations and token count."""
-        pass
 
 
 class DeterministicLocalLLMProvider(BaseLLMProvider):
@@ -56,8 +54,8 @@ class DeterministicLocalLLMProvider(BaseLLMProvider):
     async def generate_grounded_answer(
         self,
         query: str,
-        chunks: List[RankedChunk],
-    ) -> Tuple[str, List[CitationItem], int]:
+        chunks: list[RankedChunk],
+    ) -> tuple[str, list[CitationItem], int]:
         if not chunks:
             return (
                 f"Under the {POLICY_NAME}, no verified documentation was found to answer: '{query}'.",
@@ -111,7 +109,7 @@ class DeterministicLocalLLMProvider(BaseLLMProvider):
             f"> *Verified via {POLICY_NAME}. Ref: [{top_chunk.document_title} - P.{top_chunk.page_number}]*"
         )
 
-        citations: List[CitationItem] = []
+        citations: list[CitationItem] = []
         for c in chunks[:3]:
             # Find evidence excerpt for each citation that best supports the query
             c_sentences = [s.strip() for s in re.split(r"(?:[.!?]\s+|\n+)", c.content) if len(s.strip()) > 15]
@@ -154,8 +152,8 @@ class OpenAILLMProvider(BaseLLMProvider):
     async def generate_grounded_answer(
         self,
         query: str,
-        chunks: List[RankedChunk],
-    ) -> Tuple[str, List[CitationItem], int]:
+        chunks: list[RankedChunk],
+    ) -> tuple[str, list[CitationItem], int]:
         context_parts = []
         for i, c in enumerate(chunks, 1):
             context_parts.append(
@@ -242,8 +240,8 @@ class RAGService:
         query: str,
         user_context: UserContext,
         db: AsyncSession,
-        department_filter: Optional[str] = None,
-        conversation_history: Optional[List[MessageContext]] = None,
+        department_filter: str | None = None,
+        conversation_history: list[MessageContext] | None = None,
     ) -> RAGResponse:
         start_time = time.perf_counter()
 

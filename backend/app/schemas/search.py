@@ -1,4 +1,3 @@
-from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
@@ -19,5 +18,5 @@ class SearchChunkResult(BaseModel):
 class SearchResponse(BaseModel):
     query: str
     total_results: int
-    results: List[SearchChunkResult] = Field(default_factory=list)
+    results: list[SearchChunkResult] = Field(default_factory=list)
     latency_ms: float = 0.0

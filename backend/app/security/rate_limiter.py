@@ -5,7 +5,7 @@ with Retry-After header when configured limits are exceeded.
 
 import time
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple
+
 from fastapi import HTTPException, Request, status
 
 
@@ -16,9 +16,9 @@ class SlidingWindowRateLimiter:
         self.max_requests = max_requests
         self.window_seconds = window_seconds
         # Maps key -> list of timestamps
-        self.requests: Dict[str, List[float]] = defaultdict(list)
+        self.requests: dict[str, list[float]] = defaultdict(list)
 
-    def is_allowed(self, key: str) -> Tuple[bool, int]:
+    def is_allowed(self, key: str) -> tuple[bool, int]:
         """Checks if a request under 'key' is allowed.
         Returns: (is_allowed, retry_after_seconds)
         """

@@ -10,12 +10,12 @@ In non-production environments (development, test):
     so the dev server remains usable without Supabase credentials.
 """
 import logging
-from typing import Optional
-from pydantic import BaseModel
+
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.supabase import get_auth_provider
 from app.core.config import settings
@@ -31,7 +31,7 @@ class UserContext(BaseModel):
     email: str
     role: str = "EMPLOYEE"  # ADMIN, MANAGER, COMPLIANCE_OFFICER, OPERATOR, AUDITOR, EMPLOYEE
     workspace_id: str
-    department_id: Optional[str] = None
+    department_id: str | None = None
     is_admin: bool = False
     clearance_level: str = "INTERNAL"  # PUBLIC, INTERNAL, CONFIDENTIAL, RESTRICTED
 
@@ -51,7 +51,7 @@ DEFAULT_EMAIL = "admin@knowflow.internal"
 
 
 async def get_current_user_context(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+    credentials: HTTPAuthorizationCredentials | None = Depends(security_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> UserContext:
     """FastAPI dependency that resolves and returns the authenticated UserContext.

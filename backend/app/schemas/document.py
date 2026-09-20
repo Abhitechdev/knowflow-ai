@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import List, Optional
-from pydantic import BaseModel, ConfigDict, Field
+
+from pydantic import BaseModel, ConfigDict
 
 
 class DocumentChunkRead(BaseModel):
@@ -20,29 +20,29 @@ class DocumentRead(BaseModel):
 
     id: str
     workspace_id: str
-    department_id: Optional[str] = None
-    uploaded_by_user_id: Optional[str] = None
+    department_id: str | None = None
+    uploaded_by_user_id: str | None = None
     title: str
     original_filename: str
     file_type: str
     file_size_bytes: int
     storage_path: str
     status: str
-    error_message: Optional[str] = None
+    error_message: str | None = None
     access_level: str
     page_count: int
-    total_chunks: Optional[int] = 0
+    total_chunks: int | None = 0
     created_at: datetime
     updated_at: datetime
 
 
 class DocumentDetailRead(DocumentRead):
-    chunks: List[DocumentChunkRead] = []
-    signed_url: Optional[str] = None
+    chunks: list[DocumentChunkRead] = []
+    signed_url: str | None = None
 
 
 class DocumentListResponse(BaseModel):
-    items: List[DocumentRead]
+    items: list[DocumentRead]
     total: int
     page: int
     size: int

@@ -1,6 +1,6 @@
-from fastapi import APIRouter
-from app.api.v1.endpoints import health, documents, chat, search, admin, evaluation
+from app.api.v1.endpoints import admin, chat, documents, evaluation, health, search
 from app.api.v1.router import api_v1_router
+from fastapi import APIRouter
 
 api_router = APIRouter()
 

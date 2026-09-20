@@ -2,18 +2,16 @@
 Provides system metrics, audit log feeds, and telemetry foundations.
 """
 
-from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.auth.context import UserContext, require_admin
 from app.db.session import get_db
 from app.models.audit import AuditLog
 from app.models.chat import Conversation, Message
 from app.models.document import Document, DocumentChunk
 from app.models.feedback import Feedback
+from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -33,9 +31,9 @@ class AdminStatsResponse(BaseModel):
 class AuditLogItem(BaseModel):
     id: str
     workspace_id: str
-    user_id: Optional[str] = None
+    user_id: str | None = None
     action: str
-    ip_address: Optional[str] = None
+    ip_address: str | None = None
     metadata_json: str
     created_at: str
 
@@ -68,11 +66,11 @@ async def get_admin_stats(
     )
 
 
-@router.get("/audit-logs", response_model=List[AuditLogItem])
+@router.get("/audit-logs", response_model=list[AuditLogItem])
 async def get_audit_logs(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
-    action: Optional[str] = None,
+    action: str | None = None,
     user_context: UserContext = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ):

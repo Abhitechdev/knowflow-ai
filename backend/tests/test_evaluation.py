@@ -1,7 +1,6 @@
 """Unit tests for Phase 4 RAG Evaluation metrics, dataset, and faithfulness scoring."""
 
-import pytest
-from app.evaluation.dataset import GOLDEN_BENCHMARK_CASES, BenchmarkCase
+from app.evaluation.dataset import GOLDEN_BENCHMARK_CASES
 from app.evaluation.faithfulness import evaluate_faithfulness
 from app.evaluation.metrics import (
     calculate_hit_rate,

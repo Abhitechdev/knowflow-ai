@@ -4,19 +4,18 @@ faithfulness scores, and False Positive / False Negative counts.
 """
 
 from typing import Optional
-from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 
 from app.auth.context import UserContext, get_current_user_context
 from app.db.session import get_db
 from app.evaluation.dataset import GOLDEN_BENCHMARK_CASES
 from app.evaluation.engine import EvaluationEngine, EvaluationSummary
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/evaluation", tags=["evaluation"])
 
 # In-memory cached summary of the most recent evaluation run
-_LATEST_EVALUATION_SUMMARY: Optional[EvaluationSummary] = None
+_LATEST_EVALUATION_SUMMARY: EvaluationSummary | None = None
 
 
 @router.post("/run", response_model=EvaluationSummary)

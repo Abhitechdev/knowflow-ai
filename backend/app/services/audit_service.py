@@ -6,9 +6,10 @@ Persists immutable audit events to audit_logs table.
 import json
 import logging
 import uuid
-from typing import Any, Dict, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any
+
 from app.models.audit import AuditLog
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger("knowflow.audit")
 
@@ -21,11 +22,11 @@ class AuditService:
         db: AsyncSession,
         workspace_id: str,
         action: str,
-        user_id: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        user_agent: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Optional[AuditLog]:
+        user_id: str | None = None,
+        ip_address: str | None = None,
+        user_agent: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> AuditLog | None:
         """Creates an audit log entry in the database and emits a structured JSON log."""
         meta_dict = metadata or {}
         meta_str = json.dumps(meta_dict)

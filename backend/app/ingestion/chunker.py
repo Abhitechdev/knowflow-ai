@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict, Any
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -11,9 +11,9 @@ class DocumentChunker:
         self.target_chunk_chars = target_chunk_chars
         self.overlap_chars = overlap_chars
 
-    def chunk_document(self, pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def chunk_document(self, pages: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Splits document pages into chunks with full source citation metadata."""
-        chunks: List[Dict[str, Any]] = []
+        chunks: list[dict[str, Any]] = []
         global_chunk_idx = 0
 
         for page in pages:

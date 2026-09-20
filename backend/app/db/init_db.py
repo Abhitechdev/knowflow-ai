@@ -1,9 +1,9 @@
 import asyncio
 import logging
-from sqlalchemy import text
+
 from app.db.base import Base
 from app.db.session import get_engine
-import app.models  # Ensure all models are registered
+from sqlalchemy import text
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("init_db")

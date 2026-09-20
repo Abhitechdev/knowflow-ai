@@ -1,4 +1,3 @@
-from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 
 
@@ -14,13 +13,13 @@ class RankedChunk(BaseModel):
     sparse_score: float = 0.0
     rrf_score: float = 0.0
     rerank_score: float = 0.0
-    department_id: Optional[str] = None
+    department_id: str | None = None
     access_level: str = "WORKSPACE"
 
 
 class RetrievalResult(BaseModel):
     query: str
-    chunks: List[RankedChunk] = Field(default_factory=list)
+    chunks: list[RankedChunk] = Field(default_factory=list)
     dense_count: int = 0
     sparse_count: int = 0
 
@@ -34,7 +33,7 @@ class GroundingAssessment(BaseModel):
 
 class CitationItem(BaseModel):
     document_id: str
-    chunk_id: Optional[str] = None
+    chunk_id: str | None = None
     document_title: str
     page_number: int = 1
     section_heading: str = ""
@@ -47,7 +46,7 @@ class RAGResponse(BaseModel):
     is_grounded: bool
     grounding_status: str = "VERIFIED"
     policy_applied: str = "Grounded Answering Policy"
-    citations: List[CitationItem] = Field(default_factory=list)
+    citations: list[CitationItem] = Field(default_factory=list)
     model_used: str
     latency_ms: float = 0.0
     tokens_used: int = 0

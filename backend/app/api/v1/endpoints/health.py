@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
-from typing import Any, Dict
-from fastapi import APIRouter, status
-from fastapi.responses import JSONResponse
+from typing import Any
+
 from app.auth import get_auth_provider
 from app.core.config import settings
 from app.db.session import check_database_health
 from app.schemas.health import HealthResponse
+from fastapi import APIRouter, status
+from fastapi.responses import JSONResponse
 
 router = APIRouter()
 
@@ -32,7 +33,7 @@ async def get_health() -> HealthResponse:
 
 
 @router.get("/health/live", tags=["Health"])
-async def liveness_probe() -> Dict[str, str]:
+async def liveness_probe() -> dict[str, str]:
     """Lightweight process liveness check.
     Returns 200 OK as long as the process is running.
     Used by container orchestrators (Kubernetes, Docker) for restart decisions.
@@ -52,7 +53,7 @@ async def readiness_probe() -> JSONResponse:
     Returns HTTP 200 if all checks pass, HTTP 503 if any critical check fails.
     Used by load balancers/orchestrators to determine traffic routing.
     """
-    checks: Dict[str, Any] = {}
+    checks: dict[str, Any] = {}
     all_ready = True
 
     # 1. Database check

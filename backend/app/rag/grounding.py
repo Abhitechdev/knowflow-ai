@@ -1,6 +1,6 @@
 import logging
-from typing import List, Tuple
-from app.rag.base import RankedChunk, GroundingAssessment
+
+from app.rag.base import GroundingAssessment, RankedChunk
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class GroundingEvaluator:
     and refuse when sufficient evidence is unavailable.
     """
 
-    def evaluate(self, query: str, chunks: List[RankedChunk]) -> GroundingAssessment:
+    def evaluate(self, query: str, chunks: list[RankedChunk]) -> GroundingAssessment:
         """Determines whether the retrieved chunks provide sufficient, credible evidence
         to answer the user's question without guessing or hallucinating.
         """

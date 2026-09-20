@@ -1,7 +1,9 @@
 from datetime import datetime
+
 from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
-from app.db.base import Base, CommonMixin, utc_now
+
+from app.db.base import Base, CommonMixin
 
 
 class EvaluationDataset(Base, CommonMixin):

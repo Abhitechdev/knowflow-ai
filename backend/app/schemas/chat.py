@@ -1,12 +1,12 @@
 from datetime import datetime
-from typing import List, Optional
+
 from pydantic import BaseModel, Field
 
 
 class CitationRead(BaseModel):
-    id: Optional[str] = None
+    id: str | None = None
     document_id: str
-    chunk_id: Optional[str] = None
+    chunk_id: str | None = None
     document_title: str
     page_number: int = 1
     section_heading: str = ""
@@ -20,7 +20,7 @@ class MessageRead(BaseModel):
     sender_type: str  # USER, ASSISTANT, SYSTEM
     content: str
     created_at: datetime
-    sources: List[CitationRead] = Field(default_factory=list)
+    sources: list[CitationRead] = Field(default_factory=list)
 
 
 class ConversationRead(BaseModel):
@@ -40,13 +40,13 @@ class ConversationDetailRead(BaseModel):
     title: str
     created_at: datetime
     updated_at: datetime
-    messages: List[MessageRead] = Field(default_factory=list)
+    messages: list[MessageRead] = Field(default_factory=list)
 
 
 class ChatQueryRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000, description="The user's query text.")
-    conversation_id: Optional[str] = Field(None, description="Existing conversation ID to append message to.")
-    department_filter: Optional[str] = Field(None, description="Optional department filter to narrow query within user's authorized scope.")
+    conversation_id: str | None = Field(None, description="Existing conversation ID to append message to.")
+    department_filter: str | None = Field(None, description="Optional department filter to narrow query within user's authorized scope.")
 
 
 class ChatQueryResponse(BaseModel):
@@ -57,7 +57,7 @@ class ChatQueryResponse(BaseModel):
     answer: str
     is_grounded: bool
     policy_applied: str = "Grounded Answering Policy"
-    citations: List[CitationRead] = Field(default_factory=list)
+    citations: list[CitationRead] = Field(default_factory=list)
     latency_ms: float = 0.0
     tokens_used: int = 0
     model_used: str
@@ -67,14 +67,14 @@ class ChatQueryResponse(BaseModel):
 class FeedbackCreateRequest(BaseModel):
     message_id: str
     rating: int = Field(..., ge=-1, le=5, description="Thumbs down (-1), thumbs up (1), or star rating (1-5)")
-    category: Optional[str] = Field(None, max_length=50)
-    comments: Optional[str] = Field(None, max_length=1000)
+    category: str | None = Field(None, max_length=50)
+    comments: str | None = Field(None, max_length=1000)
 
 
 class FeedbackReadResponse(BaseModel):
     id: str
     message_id: str
     rating: int
-    category: Optional[str] = None
-    comments: Optional[str] = None
+    category: str | None = None
+    comments: str | None = None
     status: str = "RECORDED"

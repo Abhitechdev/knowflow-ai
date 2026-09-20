@@ -4,19 +4,17 @@ answer faithfulness, and reports False Positives & False Negatives separately.
 """
 
 import time
-from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.context import UserContext
 from app.evaluation.dataset import GOLDEN_BENCHMARK_CASES, BenchmarkCase
-from app.evaluation.faithfulness import FaithfulnessResult, evaluate_faithfulness
+from app.evaluation.faithfulness import evaluate_faithfulness
 from app.evaluation.metrics import (
     calculate_hit_rate,
     calculate_mrr,
     calculate_ndcg_at_k,
-    calculate_precision_at_k,
-    calculate_recall_at_k,
 )
 from app.rag.llm import RAGService
 
@@ -26,8 +24,8 @@ class CaseEvaluationResult(BaseModel):
     question: str
     category: str
     is_out_of_scope: bool
-    retrieved_doc_titles: List[str]
-    retrieved_sections: List[str]
+    retrieved_doc_titles: list[str]
+    retrieved_sections: list[str]
     hit_at_1: float
     hit_at_3: float
     hit_at_5: float
@@ -60,13 +58,13 @@ class EvaluationSummary(BaseModel):
     false_negatives: int  # Out-of-scope answered
     refusal_accuracy_pct: float
     avg_latency_ms: float
-    case_results: List[CaseEvaluationResult]
+    case_results: list[CaseEvaluationResult]
 
 
 class EvaluationEngine:
     """Automated benchmark executor for KnowFlow AI RAG."""
 
-    def __init__(self, user_context: Optional[UserContext] = None):
+    def __init__(self, user_context: UserContext | None = None):
         self.user_context = user_context or UserContext(
             user_id="usr-eval-admin",
             workspace_id="ws-default-001",
@@ -78,11 +76,11 @@ class EvaluationEngine:
         self.rag_service = RAGService()
 
     async def run_benchmark(
-        self, db: AsyncSession, cases: Optional[List[BenchmarkCase]] = None, top_k: int = 5
+        self, db: AsyncSession, cases: list[BenchmarkCase] | None = None, top_k: int = 5
     ) -> EvaluationSummary:
         """Executes all benchmark cases and returns a comprehensive quantitative evaluation summary."""
         test_cases = cases or GOLDEN_BENCHMARK_CASES
-        case_results: List[CaseEvaluationResult] = []
+        case_results: list[CaseEvaluationResult] = []
 
         total_hit_1 = 0.0
         total_hit_3 = 0.0

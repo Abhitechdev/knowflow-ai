@@ -1,7 +1,7 @@
 import json
 import logging
-from typing import List, Union
-from pydantic import AnyHttpUrl, field_validator
+
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     # ------------------------------------------------------------------ #
     # CORS — explicit allowlist, no wildcards in production               #
     # ------------------------------------------------------------------ #
-    CORS_ORIGINS: List[str] = [
+    CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:8000",
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
-    def parse_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+    def parse_cors_origins(cls, v: str | list[str]) -> list[str]:
         if isinstance(v, str):
             if v.startswith("[") and v.endswith("]"):
                 try:

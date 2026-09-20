@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -7,7 +8,7 @@ class AuthUser(BaseModel):
     id: str
     email: str
     role: str = "EMPLOYEE"
-    raw_user_metadata: Dict[str, Any] = {}
+    raw_user_metadata: dict[str, Any] = {}
 
 
 class AuthProvider(ABC):
@@ -16,11 +17,9 @@ class AuthProvider(ABC):
     """
 
     @abstractmethod
-    async def verify_token(self, token: str) -> Optional[AuthUser]:
+    async def verify_token(self, token: str) -> AuthUser | None:
         """Verifies bearer token and returns AuthUser or None."""
-        pass
 
     @abstractmethod
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         """Returns auth provider status and configuration state."""
-        pass

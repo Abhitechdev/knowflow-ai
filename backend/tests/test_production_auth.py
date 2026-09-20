@@ -7,18 +7,18 @@ Gate 5B verification:
 - require_admin dependency returns HTTP 403 for non-admin users.
 - SecurityHeadersMiddleware adds required headers.
 """
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from fastapi import HTTPException
 
+import pytest
 from app.auth.context import (
+    DEFAULT_USER_ID,
+    DEFAULT_WORKSPACE_ID,
     UserContext,
     get_current_user_context,
     require_admin,
-    DEFAULT_USER_ID,
-    DEFAULT_WORKSPACE_ID,
 )
 from app.core.config import Settings
+from fastapi import HTTPException
 
 
 # ------------------------------------------------------------------ #
@@ -186,10 +186,10 @@ class TestSecurityHeadersMiddleware:
     @pytest.mark.asyncio
     async def test_security_headers_added(self):
         from app.core.security_headers import SecurityHeadersMiddleware
-        from starlette.testclient import TestClient
         from starlette.applications import Starlette
-        from starlette.routing import Route
         from starlette.responses import PlainTextResponse
+        from starlette.routing import Route
+        from starlette.testclient import TestClient
 
         async def homepage(request):
             return PlainTextResponse("OK")

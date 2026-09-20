@@ -3,7 +3,7 @@ Implements Hit Rate@K, Precision@K, Recall@K, MRR, and NDCG@K.
 """
 
 import math
-from typing import List, Sequence
+from collections.abc import Sequence
 
 
 def calculate_hit_rate(retrieved_docs: Sequence[str], expected_doc: str, k: int = 3) -> float:

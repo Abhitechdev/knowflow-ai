@@ -1,11 +1,12 @@
 import logging
 from typing import Optional
+
 from app.core.config import settings
 from app.embeddings.base import BaseEmbeddingProvider
 
 logger = logging.getLogger(__name__)
 
-_embedding_provider: Optional[BaseEmbeddingProvider] = None
+_embedding_provider: BaseEmbeddingProvider | None = None
 
 
 def get_embedding_provider() -> BaseEmbeddingProvider:

@@ -1,4 +1,5 @@
-from typing import Any, Dict
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -6,6 +7,6 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     environment: str
-    database: Dict[str, Any]
-    auth: Dict[str, Any]
+    database: dict[str, Any]
+    auth: dict[str, Any]
     timestamp: str
