@@ -34,13 +34,17 @@ def get_engine() -> AsyncEngine | None:
     elif url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql+asyncpg://", 1)
 
+    connect_args = {}
+    if url.startswith("postgresql"):
+        connect_args["prepared_statement_cache_size"] = 0
+
     try:
         from sqlalchemy.pool import NullPool
         _engine = create_async_engine(
             url,
             poolclass=NullPool,
             echo=False,
-            connect_args={"prepared_statement_cache_size": 0},
+            connect_args=connect_args,
         )
         _session_factory = async_sessionmaker(
             bind=_engine,
