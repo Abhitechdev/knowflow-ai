@@ -37,8 +37,10 @@ COPY --from=builder /install /usr/local
 RUN groupadd -g 10001 appgroup && \
     useradd -u 10001 -g appgroup -s /bin/bash -m appuser
 
-# Copy application source code with non-root ownership
+# Copy application source code and migrations with non-root ownership
 COPY --chown=appuser:appgroup ./app /app/app
+COPY --chown=appuser:appgroup ./alembic /app/alembic
+COPY --chown=appuser:appgroup ./alembic.ini /app/
 COPY --chown=appuser:appgroup ./requirements.txt /app/
 
 # Environment variables for production execution

@@ -24,10 +24,10 @@
     "semantic_hash": ""
   },
   "backend/app/api/v1/endpoints/documents.py": {
-    "mtime": 1789920295.2444332,
-    "seen": 1789964251.6638901,
-    "ast_hash": "729f072046d1028e43bf6c42ed385a73",
-    "semantic_hash": "729f072046d1028e43bf6c42ed385a73"
+    "mtime": 1790001806.6678843,
+    "seen": 1790002355.5691442,
+    "ast_hash": "6a2693dbec588be941a554547ac002e4",
+    "semantic_hash": ""
   },
   "backend/app/api/v1/endpoints/evaluation.py": {
     "mtime": 1789910295.8099692,
@@ -108,15 +108,15 @@
     "semantic_hash": "76633219c87d6264867e28e3ed14b9e9"
   },
   "backend/app/db/init_db.py": {
-    "mtime": 1789910295.782164,
-    "seen": 1789964251.6638901,
-    "ast_hash": "50d6c271c6df7fd23e80d7cb5e6e829f",
-    "semantic_hash": "50d6c271c6df7fd23e80d7cb5e6e829f"
+    "mtime": 1789999307.5464504,
+    "seen": 1789999579.1833904,
+    "ast_hash": "8be28d6f05c1d7d914218845c2ca203e",
+    "semantic_hash": ""
   },
   "backend/app/db/session.py": {
-    "mtime": 1789965218.7159364,
-    "seen": 1789965639.103099,
-    "ast_hash": "05c2196091512218191e8bb1605f95c5",
+    "mtime": 1790000564.8203554,
+    "seen": 1790001309.9345078,
+    "ast_hash": "ff833cbb82b79e0f654f338cddfb262d",
     "semantic_hash": ""
   },
   "backend/app/embeddings/__init__.py": {
@@ -474,10 +474,10 @@
     "semantic_hash": ""
   },
   "docs/openapi.json": {
-    "mtime": 1789834535.263129,
-    "seen": 1789964251.6638901,
-    "ast_hash": "b53607be82fa9b0f473d5d5a8aaa99f2",
-    "semantic_hash": "b53607be82fa9b0f473d5d5a8aaa99f2"
+    "mtime": 1790002574.9675765,
+    "seen": 1790002954.4349139,
+    "ast_hash": "27fed5b636c0067effc5afc1eac307e7",
+    "semantic_hash": ""
   },
   "frontend/.eslintrc.json": {
     "mtime": 1789655766.7214956,
@@ -1224,9 +1224,9 @@
     "semantic_hash": ""
   },
   "scripts/test_gate_5e_full_cloud.py": {
-    "mtime": 1789967103.5134442,
-    "seen": 1789970825.7290657,
-    "ast_hash": "1567de09b1e917349bece97b95f1f915",
+    "mtime": 1789992733.4336317,
+    "seen": 1789999579.1833904,
+    "ast_hash": "04fd7b7cefede90af730a28ab66a8e26",
     "semantic_hash": ""
   },
   "frontend/src/app/security/page.tsx": {
@@ -1236,9 +1236,9 @@
     "semantic_hash": ""
   },
   "docs/gate_5e_e2e_report.md": {
-    "mtime": 1789976390.2920744,
-    "seen": 1789976740.7356682,
-    "ast_hash": "5dfbd4915ee7c26f71733d0170a0609a",
+    "mtime": 1789998390.6610987,
+    "seen": 1789999579.1833904,
+    "ast_hash": "b28de972d287f5a391ed82178cabb09a",
     "semantic_hash": ""
   },
   "scripts/test_blocker1_cloud_rate_limit.py": {
@@ -1275,6 +1275,48 @@
     "mtime": 1789976753.0339043,
     "seen": 1789991280.6050763,
     "ast_hash": "ddefdaa2a25249b7f4a126e94e79024e",
+    "semantic_hash": ""
+  },
+  "backend/alembic/env.py": {
+    "mtime": 1789999215.6998925,
+    "seen": 1789999579.1833904,
+    "ast_hash": "3c1900ed1ce82a3e8448c2315a2c7350",
+    "semantic_hash": ""
+  },
+  "backend/alembic/versions/0001_baseline_schema.py": {
+    "mtime": 1789999256.2352724,
+    "seen": 1789999579.1833904,
+    "ast_hash": "10d01c7a3bed80bdc47bcfb409b4bad7",
+    "semantic_hash": ""
+  },
+  "scripts/verify_blockers.py": {
+    "mtime": 1789998153.896219,
+    "seen": 1789999579.1833904,
+    "ast_hash": "1e2914b8e75a46fcacb53e81ea6cb1ac",
+    "semantic_hash": ""
+  },
+  "docs/gate_5f_database_migrations_report.md": {
+    "mtime": 1789999543.1479425,
+    "seen": 1789999579.1833904,
+    "ast_hash": "b20773811738ac4bfd57aa7dae0f5906",
+    "semantic_hash": ""
+  },
+  "scripts/test_dr_empirical_measurement.py": {
+    "mtime": 1790000953.533679,
+    "seen": 1790001309.9345078,
+    "ast_hash": "9e67342ab716119c1ae7b439912b60f9",
+    "semantic_hash": ""
+  },
+  "scripts/test_gate_5f3_deletion_audit.py": {
+    "mtime": 1790001992.8355718,
+    "seen": 1790002355.5691442,
+    "ast_hash": "3aba6061d0377b4d58701dd15690004b",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_observability.py": {
+    "mtime": 1790002566.0218325,
+    "seen": 1790002954.4349139,
+    "ast_hash": "9460667038227329e0e631b1a5cb136b",
     "semantic_hash": ""
   }
 }

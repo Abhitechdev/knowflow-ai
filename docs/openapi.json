@@ -113,7 +113,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/api/documents": {
@@ -124,6 +129,11 @@
         "summary": "List Documents",
         "description": "Lists real ingested documents from the database with pagination, filters, and chunk counts.",
         "operationId": "list_documents_api_documents_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "skip",
@@ -229,6 +239,11 @@
         "summary": "Get Document",
         "description": "Returns detailed information for a document, including extracted chunks and signed download URL.",
         "operationId": "get_document_api_documents__document_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "document_id",
@@ -270,6 +285,11 @@
         "summary": "Delete Document",
         "description": "Deletes a document from Supabase Storage and PostgreSQL.",
         "operationId": "delete_document_api_documents__document_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "document_id",
@@ -306,6 +326,11 @@
         "summary": "Retry Document Processing",
         "description": "Retries processing for a failed document.",
         "operationId": "retry_document_processing_api_documents__document_id__retry_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "document_id",
@@ -871,6 +896,53 @@
         }
       }
     },
+    "/api/v1/workspaces": {
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Create Workspace",
+        "description": "Creates a new workspace and sets the calling user as the ADMIN.",
+        "operationId": "create_workspace_api_v1_workspaces_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceRead"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/documents/upload": {
       "post": {
         "tags": [
@@ -910,7 +982,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/api/v1/documents": {
@@ -921,6 +998,11 @@
         "summary": "List Documents",
         "description": "Lists real ingested documents from the database with pagination, filters, and chunk counts.",
         "operationId": "list_documents_api_v1_documents_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "skip",
@@ -1026,6 +1108,11 @@
         "summary": "Get Document",
         "description": "Returns detailed information for a document, including extracted chunks and signed download URL.",
         "operationId": "get_document_api_v1_documents__document_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "document_id",
@@ -1067,6 +1154,11 @@
         "summary": "Delete Document",
         "description": "Deletes a document from Supabase Storage and PostgreSQL.",
         "operationId": "delete_document_api_v1_documents__document_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "document_id",
@@ -1103,6 +1195,11 @@
         "summary": "Retry Document Processing",
         "description": "Retries processing for a failed document.",
         "operationId": "retry_document_processing_api_v1_documents__document_id__retry_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "document_id",
@@ -2934,6 +3031,63 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "WorkspaceCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 2,
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Slug"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "slug"
+        ],
+        "title": "WorkspaceCreate"
+      },
+      "WorkspaceRead": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "WorkspaceRead"
       }
     },
     "securitySchemes": {

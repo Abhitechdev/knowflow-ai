@@ -1,40 +1,40 @@
 # Graph Report - ragproject  (2026-09-21)
 
 ## Corpus Check
-- 208 files · ~122,968 words
+- 215 files · ~129,892 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 15 file(s) not represented in the graph (top: .example 5, (none) 4, .woff 2)
+- Unclassified: 17 file(s) not represented in the graph (top: .example 5, (none) 4, .woff 2)
 
 ## Summary
-- 1785 nodes · 2997 edges · 159 communities (119 shown, 40 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 154 edges (avg confidence: 0.94)
+- 1839 nodes · 3141 edges · 164 communities (122 shown, 42 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 171 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2d3bff4c`
+- Built from commit: `9a00d04a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - Base
 - engine.py
-- verify_phase5_local.py
+- documents.py
 - ResilientLLMInvoker
 - test_workspaces.py
 - test_documents.py
-- 2. Detailed Cloud Verification Evidence
+- 3. General Cloud E2E Verification Results
 - PromptInjectionGuard
-- button.tsx
-- endpoints/chat.py
-- admin.py
-- conftest.py
+- env.py
+- llm.py
+- context.py
+- test_prompt_injection.py
 - RankedChunk
-- rate_limiter.py
+- endpoints/chat.py
 - run_gate_5e_cloud_suite.py
 - get_embedding_provider
 - compilerOptions
-- production_smoke_test.py
-- test_production_auth.py
+- admin.py
+- UserContext
 - test_rag.py
 - chat/page.tsx
 - lucide-react
@@ -42,25 +42,25 @@
 - layout.tsx
 - SupabaseStorageService
 - package.json
-- llm.py
+- CitationItem
 - dependencies
 - cn
 - brandkit/SKILL.md
 - backup_db.py
 - CORE DIRECTIVE: IMAGE-FIRST WEBSITE DESIGN TO CODE
-- test_chat.py
-- UserContext
+- rate_limiter.py
+- production_smoke_test.py
 - api.ts
 - logging
 - supabase/middleware.ts
-- test_gate_5e_full_cloud.py
+- clean_text
 - CORE DIRECTIVE: PREMIUM MOBILE APP IMAGE DIRECTION
-- test_restore.py
+- test_observability.py
 - High-Agency Frontend Skill
 - ContextBudgetManager
-- audit_security.py
+- button.tsx
 - Appendix B - Canonical Sources (read these before reinventing)
-- uuid
+- .chunk_document
 - extends
 - Design Audit
 - next.config.mjs
@@ -73,14 +73,14 @@
 - Changelog
 - Changelog
 - Writing Guidelines for Postgres References
-- Settings
+- test_gate_5e_full_cloud.py
 - Design System: Taste Standard
 - 2. THE COMBINATORIAL VARIATION ENGINE
-- .retrieve
+- devDependencies
 - KnowFlow AI — Enterprise Knowledge & SOP Agent
 - 4. DESIGN ENGINEERING DIRECTIVES (Bias Correction)
-- endpoints/health.py
-- README.md
+- hybrid_search
+- SecurityHeadersMiddleware
 - KnowFlow AI — Portfolio Case Study
 - 10. REFERENCE VOCABULARY (Pattern Names the Agent Should Know)
 - tasteskill: Anti-Slop Frontend Skill
@@ -88,19 +88,19 @@
 - 22. STYLE VARIATION ENGINE
 - Protocol: Premium Utilitarian Minimalism UI Architect
 - Section Definitions
-- Disaster Recovery Runbook — KnowFlow AI
+- audit_security.py
 - 11. COMPONENT EXECUTION GUIDELINES
 - 18. EXTRA CREATIVITY & IMPLEMENTATION EDGE
 - Ponytail
-- context.py
-- Demo Scenario Flow (10-minute walkthrough)
+- README.md
+- Disaster Recovery Runbook — KnowFlow AI
 - 9. AI TELLS (Forbidden Patterns)
 - 12. THE COMBINATORIAL VARIATION ENGINE
 - 8. ANTI-AI-SLOP RULES
 - Ponytail Help
 - LocalEmbeddingProvider
-- JinaEmbeddingProvider
-- devDependencies
+- Settings
+- Demo Scenario Flow (10-minute walkthrough)
 - 11. REDESIGN PROTOCOL
 - 3. DEFAULT ARCHITECTURE & CONVENTIONS
 - 6. PERFORMANCE & ACCESSIBILITY GUARDRAILS
@@ -112,8 +112,8 @@
 - 29. ANTI-AI-SLOP RULES
 - 5. IMAGE COUNT & PAGE SLICING
 - Supabase Postgres Best Practices
-- time
-- test_admin.py
+- test_dr_empirical_measurement.py
+- main.py
 - 0. BRIEF INFERENCE (Read the Room Before Anything Else)
 - 12. THE BLOCK LIBRARY (Contract - Implementations Land Here Iteratively)
 - 5. CONTEXT-AWARE PROACTIVITY
@@ -122,9 +122,9 @@
 - ponytail-audit/SKILL.md
 - Ponytail Gain
 - ponytail-review/SKILL.md
-- supabase.py
+- endpoints/health.py
 - CLINICAL OPERATIONS SOP: REFRIGERATED STORAGE & COLD CHAIN INTEGRITY
-- KnowFlow AI — Live Demo Guide
+- make_settings
 - Challenges & Learning
 - 7. DIAL DEFINITIONS (Technical Reference)
 - 33. DEFAULT SECTION PACKS
@@ -135,7 +135,7 @@
 - 15. DEFAULT SITE PACKS
 - 20. EXAMPLE INTERPRETATIONS
 - ponytail-debt/SKILL.md
-- main.py
+- check_database_health
 - frontend/README.md
 - backend-status-indicator.tsx
 - rules/graphify.md
@@ -172,7 +172,12 @@
 - security-rls-performance.md
 - _template.md
 - workflows/graphify.md
+- _scrub_event
+- OpenAIEmbeddingProvider
+- get_session_factory
+- KnowFlow AI — Live Demo Guide
 - Emergency Failover Procedure
+- init_sentry
 
 ## God Nodes (most connected - your core abstractions)
 1. `UserContext` - 52 edges
@@ -183,105 +188,105 @@
 6. `HybridRetriever` - 26 edges
 7. `CORE DIRECTIVE: AWWWARDS-LEVEL IMAGE ART DIRECTION` - 22 edges
 8. `get_current_user_context()` - 21 edges
-9. `lucide-react` - 20 edges
-10. `react` - 20 edges
+9. `Document` - 20 edges
+10. `lucide-react` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Production Hardening Implemented` --references--> `require_admin()`  [INFERRED]
   docs/portfolio_case_study.md → backend/app/auth/context.py
-- `main()` --uses--> `UserContext`  [INFERRED]
-  scripts/check_retrieval.py → backend/app/auth/context.py
-- `run_e2e_smoke_tests()` --uses--> `UserContext`  [INFERRED]
-  scripts/e2e_manual_smoke_test.py → backend/app/auth/context.py
-- `ensure_unauth_fixtures()` --calls--> `get_session_factory()`  [INFERRED]
-  scripts/e2e_manual_smoke_test.py → backend/app/db/session.py
-- `main()` --calls--> `get_session_factory()`  [INFERRED]
-  scripts/verify_phase4_evaluation.py → backend/app/db/session.py
+- `1. Executive Summary & Verification Matrix` --references--> `lifespan()`  [INFERRED]
+  docs/gate_5f_database_migrations_report.md → backend/app/main.py
+- `2. Architecture & Components` --references--> `downgrade()`  [INFERRED]
+  docs/gate_5f_database_migrations_report.md → backend/alembic/versions/0001_baseline_schema.py
+- `2. Architecture & Components` --references--> `check_database_health()`  [INFERRED]
+  docs/gate_5f_database_migrations_report.md → backend/app/db/session.py
+- `2. Architecture & Components` --references--> `lifespan()`  [INFERRED]
+  docs/gate_5f_database_migrations_report.md → backend/app/main.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (159 total, 40 thin omitted)
+## Communities (164 total, 42 thin omitted)
 
 ### Community 0 - "Base"
-Cohesion: 0.21
+Cohesion: 0.22
 Nodes (21): app_db_base, Base, CommonMixin, Common UUID primary key and timestamp fields for PRD entities., utc_now(), UsageEvent, MessageSource, DocumentPermission (+13 more)
 
 ### Community 1 - "engine.py"
 Cohesion: 0.08
-Nodes (41): BenchmarkCase, BaseModel, Curated Golden Benchmark Dataset for KnowFlow AI RAG Evaluation. Contains…, CaseEvaluationResult, EvaluationEngine, EvaluationSummary, AsyncSession, BaseModel (+33 more)
+Nodes (40): BenchmarkCase, BaseModel, Curated Golden Benchmark Dataset for KnowFlow AI RAG Evaluation. Contains…, CaseEvaluationResult, EvaluationEngine, EvaluationSummary, AsyncSession, BaseModel (+32 more)
 
-### Community 2 - "verify_phase5_local.py"
-Cohesion: 0.07
-Nodes (48): delete_document(), get_document(), list_documents(), AsyncSession, delete, Lists real ingested documents from the database with pagination, filters, and…, Returns detailed information for a document, including extracted chunks and…, Deletes a document from Supabase Storage and PostgreSQL. (+40 more)
+### Community 2 - "documents.py"
+Cohesion: 0.17
+Nodes (21): app_schemas_document, app_services_audit_service, get_document(), list_documents(), AsyncSession, Lists real ingested documents from the database with pagination, filters, and…, Returns detailed information for a document, including extracted chunks and…, Retries processing for a failed document. (+13 more)
 
 ### Community 3 - "ResilientLLMInvoker"
 Cohesion: 0.11
 Nodes (18): CircuitBreakerOpenException, Production LLM Resilience Engine for KnowFlow AI. Enforces: 1. Per-request…, Raised when circuit breaker is tripped open to fail fast., Wraps LLM invocations with retry, secondary provider fallback, and circuit…, Returns True if the circuit breaker is currently tripped open., Executes LLM generation with retry -> secondary provider -> safe structured…, ResilientLLMInvoker, MockFailingProvider (+10 more)
 
 ### Community 4 - "test_workspaces.py"
-Cohesion: 0.15
-Nodes (29): app_api_v1_endpoints_workspaces, app_schemas_workspace, create_workspace(), AsyncSession, Creates a new workspace and sets the calling user as the ADMIN., AuthUser, BaseModel, get_auth_user_only() (+21 more)
+Cohesion: 0.13
+Nodes (28): app_api_v1_endpoints_workspaces, app_schemas_workspace, create_workspace(), AsyncSession, Creates a new workspace and sets the calling user as the ADMIN., get_auth_user_only(), get_current_user_context(), AsyncSession (+20 more)
 
 ### Community 5 - "test_documents.py"
-Cohesion: 0.09
-Nodes (25): DocumentChunker, Any, Splits document pages into chunks with full source citation metadata., Chunks extracted pages/sections into overlapping segments preserving page and…, clean_text(), detect_section_heading(), Heuristic to detect heading or first section from text snippet., Cleans extracted raw text while preserving readability and paragraph structure. (+17 more)
+Cohesion: 0.13
+Nodes (15): DocumentChunker, Chunks extracted pages/sections into overlapping segments preserving page and…, detect_section_heading(), Heuristic to detect heading or first section from text snippet., Sanitizes filename removing unsafe path traversal characters and symbols., Validates file extension, size, and returns (is_valid, error_msg,…, sanitize_filename(), validate_file() (+7 more)
 
-### Community 6 - "2. Detailed Cloud Verification Evidence"
-Cohesion: 0.09
-Nodes (21): 1. Executive Summary & Gate Status, 2. Detailed Cloud Verification Evidence, 3. Compliance & Factual Documentation Review, A. Deployment Identity & Version, B. Supabase Auth URL & Redirect Configuration, C. Real User Registration & Real SMTP Email Confirmation Flow, D. Session Persistence & Protected Route Access, E. Workspace Onboarding & Admin Assignment (+13 more)
+### Community 6 - "3. General Cloud E2E Verification Results"
+Cohesion: 0.15
+Nodes (12): 1. Executive Summary & Gate Status, 2. Deep Blocker Evidence, 3. General Cloud E2E Verification Results, 4. Regression Testing Summary, A. Deployment Identity & Version, B. Multi-Tenant Workspace & Document Isolation, BLOCKER 1 — Live Rate Limiting & Abuse Prevention, BLOCKER 2 — Complete 12-Step Password Recovery Flow (+4 more)
 
 ### Community 7 - "PromptInjectionGuard"
-Cohesion: 0.14
+Cohesion: 0.15
 Nodes (10): InjectionDetectionResult, PromptInjectionGuard, BaseModel, Prompt Injection, Delimiter Sanitization & Input Guardrails. Defends KnowFlow…, Multi-layer input sanitization and prompt injection defense., Strips non-printable control characters, zero-width characters, and neutralizes…, Inspects query text against known injection patterns and returns threat status., Wraps retrieved chunk text inside strict XML boundary tags with explicit… (+2 more)
 
-### Community 8 - "button.tsx"
-Cohesion: 0.27
-Nodes (8): SearchPage(), Button, ButtonProps, buttonVariants, performHybridSearch(), SearchChunkResult, class-variance-authority, @radix-ui/react-slot
+### Community 8 - "env.py"
+Cohesion: 0.14
+Nodes (16): alembic, do_run_migrations(), get_database_url(), Run migrations in 'online' mode., Resolve database URL from environment or settings., Run migrations in 'offline' mode., Run migrations using an async engine (e.g. PostgreSQL with asyncpg)., Run migrations using a sync engine (e.g. SQLite). (+8 more)
 
-### Community 9 - "endpoints/chat.py"
-Cohesion: 0.18
-Nodes (24): app_schemas_chat, delete_conversation(), get_conversation(), list_conversations(), AsyncSession, delete, query_knowledge_base(), Lists conversations belonging to the authenticated user in the current… (+16 more)
+### Community 9 - "llm.py"
+Cohesion: 0.24
+Nodes (11): GroundingAssessment, BaseModel, RAGResponse, RetrievalResult, GroundingEvaluator, Enforces the Grounded Answering Policy. The system must answer strictly from…, Determines whether the retrieved chunks provide sufficient, credible evidence…, Standard refusal response adhering strictly to the Grounded Answering Policy. (+3 more)
 
-### Community 10 - "admin.py"
-Cohesion: 0.23
-Nodes (12): AdminStatsResponse, AuditLogItem, get_admin_stats(), get_audit_logs(), AsyncSession, BaseModel, Admin and Observability API endpoints for KnowFlow AI. Provides system metrics,…, Returns aggregated system metrics across documents, queries, and feedback. (+4 more)
+### Community 10 - "context.py"
+Cohesion: 0.24
+Nodes (10): app_api_v1_endpoints, app_api_v1_router, app_db_session, app_schemas_search, Evaluation API Endpoints for KnowFlow AI. Runs automated RAG evaluation…, Request-scoped user context dependency. In PRODUCTION (settings.ENVIRONMENT ==…, get_db(), FastAPI dependency for DB sessions. Raises RuntimeError if DB is unconfigured. (+2 more)
 
-### Community 11 - "conftest.py"
-Cohesion: 0.22
-Nodes (9): AsyncEngine, asyncio, init_db(), get_engine(), Returns async SQLAlchemy engine if DATABASE_URL is configured., client(), fixture, setup_test_db() (+1 more)
+### Community 11 - "test_prompt_injection.py"
+Cohesion: 0.06
+Nodes (26): alembic_config, AsyncEngine, init_db(), Run alembic upgrade head programmatically., Seed demo/default workspace and admin user if needed., run_alembic_upgrade(), seed_default_data(), get_engine() (+18 more)
 
 ### Community 12 - "RankedChunk"
 Cohesion: 0.17
-Nodes (15): RankedChunk, BaseReranker, HybridReranker, NoOpReranker, Stage 2 Reranking for KnowFlow AI. Implements HybridReranker, combining stage 1…, Abstract interface for Stage 2 rerankers., Pass-through reranker returning top_k chunks without modification., Calibrated two-stage HybridReranker. Combines stage 1 RRF scores with fine-… (+7 more)
+Nodes (17): RankedChunk, BaseReranker, HybridReranker, NoOpReranker, Stage 2 Reranking for KnowFlow AI. Implements HybridReranker, combining stage 1…, Abstract interface for Stage 2 rerankers., Pass-through reranker returning top_k chunks without modification., Calibrated two-stage HybridReranker. Combines stage 1 RRF scores with fine-… (+9 more)
 
-### Community 13 - "rate_limiter.py"
-Cohesion: 0.14
-Nodes (16): _get_client_key(), Request, rate_limit_admin(), rate_limit_chat(), rate_limit_search(), Sliding-Window Rate Limiting & Abuse Protection. Tracks requests per IP and per…, In-memory sliding window rate limiter., Checks if a request under 'key' is allowed. Returns: (is_allowed,… (+8 more)
+### Community 13 - "endpoints/chat.py"
+Cohesion: 0.18
+Nodes (24): app_schemas_chat, delete_conversation(), get_conversation(), list_conversations(), AsyncSession, delete, query_knowledge_base(), Lists conversations belonging to the authenticated user in the current… (+16 more)
 
 ### Community 14 - "run_gate_5e_cloud_suite.py"
 Cohesion: 0.19
 Nodes (18): check_a_deployment_identity(), check_b_supabase_auth_config(), check_c_registration_flow(), handle_req(), check_d_session_cloud(), check_e_workspace_onboarding(), check_f_tenant_isolation(), check_g_document_rag_flow() (+10 more)
 
 ### Community 15 - "get_embedding_provider"
-Cohesion: 0.20
-Nodes (7): get_embedding_provider(), Returns the singleton embedding provider based on application configuration., OpenAIEmbeddingProvider, OpenAI embedding provider using text-embedding-3-small configured to 384…, process_document_pipeline(), AsyncSession, End-to-end ingestion pipeline: Storage Download -> Extraction -> Cleaning ->…
+Cohesion: 0.17
+Nodes (9): get_embedding_provider(), Returns the singleton embedding provider based on application configuration., JinaEmbeddingProvider, Jina AI embedding provider (https://api.jina.ai/v1/embeddings) configured to…, process_document_pipeline(), AsyncSession, End-to-end ingestion pipeline: Storage Download -> Extraction -> Cleaning ->…, asyncio (+1 more)
 
 ### Community 16 - "compilerOptions"
 Cohesion: 0.11
 Nodes (17): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+9 more)
 
-### Community 17 - "production_smoke_test.py"
-Cohesion: 0.28
-Nodes (17): check(), confirm_production_target(), http_get(), http_post(), main(), Any, Production/Staging smoke test harness for KnowFlow AI. Targets STAGING by…, test_known_answer_rag() (+9 more)
+### Community 17 - "admin.py"
+Cohesion: 0.13
+Nodes (23): AdminStatsResponse, AuditLogItem, get_admin_stats(), get_audit_logs(), AsyncSession, BaseModel, Admin and Observability API endpoints for KnowFlow AI. Provides system metrics,…, Returns aggregated system metrics across documents, queries, and feedback. (+15 more)
 
-### Community 18 - "test_production_auth.py"
-Cohesion: 0.05
-Nodes (25): Dependency: rejects non-admin callers with HTTP 403. Use this on all admin-only…, require_admin(), Request, Security headers middleware for production hardening. Adds HSTS, CSP, X-Frame-…, Inject security response headers into every HTTP response. Headers applied: -…, SecurityHeadersMiddleware, make_settings(), asyncio (+17 more)
+### Community 18 - "UserContext"
+Cohesion: 0.11
+Nodes (16): BaseModel, Dependency: rejects non-admin callers with HTTP 403. Use this on all admin-only…, Returns list of document access levels this user is authorized to read., require_admin(), UserContext, asyncio, Tests for production authentication hardening and admin RBAC. Gate 5B…, Verify that missing tokens cause 401 in production. (+8 more)
 
 ### Community 19 - "test_rag.py"
-Cohesion: 0.15
-Nodes (15): DeterministicLocalLLMProvider, DEVELOPMENT / TESTING ONLY — NOT FOR PRODUCTION USE. Provides deterministic,…, cosine_similarity(), Calculates cosine similarity between two float vectors., asyncio, Verifies that citations actually contain evidence supporting the generated…, Verifies dense vector cosine similarity calculation and ordering., Verifies GeminiLLMProvider initialization and prompt building. (+7 more)
+Cohesion: 0.09
+Nodes (24): compute_bm25_score(), cosine_similarity(), AsyncSession, Constructs server-side authorization SQL expressions. Never trust client-…, Executes hybrid retrieval enforcing server-side authorization., Tokenize and normalize text into lowercase terms., Computes standard BM25 score for a document given query terms., Calculates cosine similarity between two float vectors. (+16 more)
 
 ### Community 20 - "chat/page.tsx"
 Cohesion: 0.16
@@ -307,9 +312,9 @@ Nodes (7): Any, Service to interact directly with private Supabase Storage bucke
 Cohesion: 0.08
 Nodes (22): name, private, scripts, build, dev, lint, start, version (+14 more)
 
-### Community 26 - "llm.py"
-Cohesion: 0.13
-Nodes (22): CitationItem, GroundingAssessment, BaseModel, RAGResponse, RetrievalResult, GroundingEvaluator, Enforces the Grounded Answering Policy. The system must answer strictly from…, Determines whether the retrieved chunks provide sufficient, credible evidence… (+14 more)
+### Community 26 - "CitationItem"
+Cohesion: 0.16
+Nodes (13): CitationItem, BaseLLMProvider, DeterministicLocalLLMProvider, GeminiLLMProvider, get_llm_provider(), OpenAILLMProvider, ABC, Production LLM provider using OpenAI API or OpenAI-compatible gateway. (+5 more)
 
 ### Community 27 - "dependencies"
 Cohesion: 0.15
@@ -324,44 +329,44 @@ Cohesion: 0.05
 Nodes (43): 1. Logo Cover, 1. Monogram + Meaning, 2 × 3 REFERENCE-STYLE LAYOUT, 2. Logo Construction, 2. Product Action, 3. Digital Application, 3. Metaphor Fusion, 4. Brand Essence (+35 more)
 
 ### Community 30 - "backup_db.py"
-Cohesion: 0.22
-Nodes (12): gzip, get_db_url(), main(), parse_db_url(), Path, Verify backup file contains expected SQL content., Database backup script for KnowFlow AI. Creates a timestamped pg_dump snapshot…, Read DATABASE_URL from environment or .env file. (+4 more)
+Cohesion: 0.09
+Nodes (27): argparse, CompletedProcess, gzip, pathlib, get_db_url(), main(), parse_db_url(), Path (+19 more)
 
 ### Community 31 - "CORE DIRECTIVE: IMAGE-FIRST WEBSITE DESIGN TO CODE"
 Cohesion: 0.06
 Nodes (34): 10. IMAGE-FIRST CODEX WEBSITE WORKFLOW, 11. WHEN TO TRIGGER IMAGE GENERATION FIRST, 13. WEBSITE REFERENCE RULE, 15. RESPONSIVE FIRST-VIEW RULE, 16. ANTI-NESTED-BOX RULE, 17. REDUCE MICRO-UI CLUTTER RULE, 18. SECTION IMAGE GENERATION RULE, 19. WEBSITE IMAGE SYSTEM RULE (+26 more)
 
-### Community 32 - "test_chat.py"
-Cohesion: 0.40
-Nodes (5): TestClient, Verifies that asking a question creates Conversation, Message, and persists…, Verifies direct hybrid search endpoint., test_chat_query_and_persistence(), test_hybrid_search_endpoint()
+### Community 32 - "rate_limiter.py"
+Cohesion: 0.14
+Nodes (16): _get_client_key(), Request, rate_limit_admin(), rate_limit_chat(), rate_limit_search(), Sliding-Window Rate Limiting & Abuse Protection. Tracks requests per IP and per…, In-memory sliding window rate limiter., Checks if a request under 'key' is allowed. Returns: (is_allowed,… (+8 more)
 
-### Community 33 - "UserContext"
-Cohesion: 0.15
-Nodes (13): BaseModel, Returns list of document access levels this user is authorized to read., UserContext, HybridRetriever, Hybrid retrieval engine combining dense vector search and sparse keyword search…, Constructs server-side authorization SQL expressions. Never trust client-…, TestUserContextAccessLevels, Verifies server-side authorization filters out unauthorized documents for non-… (+5 more)
+### Community 33 - "production_smoke_test.py"
+Cohesion: 0.12
+Nodes (39): get_latest_evaluation_summary(), AsyncSession, Triggers an automated evaluation benchmark across the golden test suite.…, Returns the most recent automated evaluation summary., run_evaluation_benchmark(), liveness_probe(), Lightweight process liveness check. Returns 200 OK as long as the process is…, check() (+31 more)
 
 ### Community 34 - "api.ts"
 Cohesion: 0.14
 Nodes (25): AdminPage(), handleFilterAudit(), handleRunEvaluation(), loadInitialData(), DocumentsPage(), AdminStats, APIError, AuditLogRecord (+17 more)
 
 ### Community 35 - "logging"
-Cohesion: 0.19
-Nodes (11): app_core_config, BaseEmbeddingProvider, ABC, Returns the embedding vector dimension., Generates embeddings for a list of text chunks., Generates an embedding for a search query string., Abstract base class for embedding providers., fastembed (+3 more)
+Cohesion: 0.14
+Nodes (13): app_core_config, Sentry SDK integration for production error tracking. Initializes only when…, BaseEmbeddingProvider, ABC, Returns the embedding vector dimension., Generates embeddings for a list of text chunks., Generates an embedding for a search query string., Abstract base class for embedding providers. (+5 more)
 
 ### Community 36 - "supabase/middleware.ts"
 Cohesion: 0.25
 Nodes (7): GET(), IMPORTANT: Avoid writing any logic between createServerClient and, updateSession(), createClient(), config, middleware(), @supabase/ssr
 
-### Community 37 - "test_gate_5e_full_cloud.py"
+### Community 37 - "clean_text"
 Cohesion: 0.36
-Nodes (8): log_result(), test_deployment_identity(), test_e2e_browser_flows(), test_password_reset_flow(), test_rag_and_security_flows(), test_security_and_network(), test_supabase_auth_config(), test_tenant_isolation_and_rbac()
+Nodes (6): clean_text(), Cleans extracted raw text while preserving readability and paragraph structure., DocumentExtractor, Any, Extracts structured text from supported file types (PDF, DOCX, TXT, MD, CSV)…, Extracts content as a list of pages/sections. Each item is: {"page_number":…
 
 ### Community 38 - "CORE DIRECTIVE: PREMIUM MOBILE APP IMAGE DIRECTION"
 Cohesion: 0.06
 Nodes (34): 10. DEVICE MOCKUP FRAME RULE, 11. ONBOARDING FLOW RULE, 12. FIRST SCREEN CLEANLINESS RULE, 13. SAFE AREA AND SYSTEM REGION RULE, 14. NAVIGATION RULE, 15. CLEAN LAYOUT RULE, 16. CREATIVE IMAGE DIRECTION RULE, 17. BACKGROUND TEXTURE AND SURFACE RULE (+26 more)
 
-### Community 39 - "test_restore.py"
-Cohesion: 0.24
-Nodes (9): CompletedProcess, main(), parse_db_url(), Database restore verification test for KnowFlow AI. Performs an actual backup →…, Run a subprocess command and return the result., Parse a postgresql:// URL into components., run_cmd(), subprocess (+1 more)
+### Community 39 - "test_observability.py"
+Cohesion: 0.19
+Nodes (12): app_core_sentry, TestClient, Verify /api/health overall status endpoint., Verify root endpoint structure., Automated API Contract Drift Guard: Verifies that the committed…, Verify /api/health/live process liveness probe., Verify /api/health/ready deep readiness probe., test_health_liveness_endpoint() (+4 more)
 
 ### Community 40 - "High-Agency Frontend Skill"
 Cohesion: 0.06
@@ -371,17 +376,13 @@ Nodes (30): 10. FINAL PRE-FLIGHT CHECK, 1. ACTIVE BASELINE CONFIGURATION, 2. DEF
 Cohesion: 0.33
 Nodes (4): ContextBudgetManager, Budgets context window tokens and cleanly truncates at sentence boundaries., Heuristic token estimation (~4 chars per token)., Deduplicates overlapping content and trims chunks to fit within the token…
 
-### Community 42 - "audit_security.py"
-Cohesion: 0.18
-Nodes (15): argparse, pathlib, check_gitignore(), main(), Security audit script for KnowFlow AI. Checks for: 1. Exposed secrets /…, Scan Python source files for hardcoded credential patterns., Scan .env files for wildcard CORS and DEBUG=True in production configs., Verify that .env files are excluded from git tracking. (+7 more)
+### Community 42 - "button.tsx"
+Cohesion: 0.27
+Nodes (8): SearchPage(), Button, ButtonProps, buttonVariants, performHybridSearch(), SearchChunkResult, class-variance-authority, @radix-ui/react-slot
 
 ### Community 43 - "Appendix B - Canonical Sources (read these before reinventing)"
 Cohesion: 0.09
 Nodes (21): APPENDICES - Real Source-Backed Reference Material, Appendix A - Install Commands per Design System, Appendix B - Canonical Sources (read these before reinventing), Appendix C - Apple Liquid Glass: Honest Web Approximation, Apple Liquid Glass (Apple platforms only), Atlassian, Bootstrap, Carbon (+13 more)
-
-### Community 44 - "uuid"
-Cohesion: 0.24
-Nodes (8): AuditLog, AuditService, Any, AsyncSession, Audit Logging Service for KnowFlow AI. Provides auditability foundations…, Records audit logs for user queries, citations, access denials, and security…, Creates an audit log entry in the database and emits a structured JSON log., uuid
 
 ### Community 46 - "extends"
 Cohesion: 0.50
@@ -423,9 +424,9 @@ Nodes (15): [0.1.3](https://github.com/supabase/agent-skills/compare/v0.1.2...v0
 Cohesion: 0.12
 Nodes (15): 1. Concrete Transformation Patterns, 2. Error-First Structure, 3. Quantified Impact, 4. Self-Contained Examples, 5. Semantic Naming, Code Example Standards, Comments, Impact Level Guidelines (+7 more)
 
-### Community 59 - "Settings"
-Cohesion: 0.22
-Nodes (7): Settings, test_cors_origins_parsing(), test_default_settings(), BaseSettings, field_validator, json, pydantic_settings
+### Community 59 - "test_gate_5e_full_cloud.py"
+Cohesion: 0.36
+Nodes (8): log_result(), test_deployment_identity(), test_e2e_browser_flows(), test_password_reset_flow(), test_rag_and_security_flows(), test_security_and_network(), test_supabase_auth_config(), test_tenant_isolation_and_rbac()
 
 ### Community 60 - "Design System: Taste Standard"
 Cohesion: 0.13
@@ -435,9 +436,9 @@ Nodes (14): 1. Visual Theme & Atmosphere, 2. Color Palette & Roles, 3. Typograph
 Cohesion: 0.14
 Nodes (14): 2. THE COMBINATORIAL VARIATION ENGINE, Background Character, Background Mode (per-section), Composition Anchor (per-section), CTA Variation, Hero Architecture, Hero Scale (per-page), Motion-Implied Language (+6 more)
 
-### Community 62 - ".retrieve"
-Cohesion: 0.25
-Nodes (8): compute_bm25_score(), AsyncSession, Executes hybrid retrieval enforcing server-side authorization., Tokenize and normalize text into lowercase terms., Computes standard BM25 score for a document given query terms., _tokenize(), Verifies BM25 sparse keyword score calculation., test_bm25_keyword_retrieval()
+### Community 62 - "devDependencies"
+Cohesion: 0.22
+Nodes (9): devDependencies, eslint, eslint-config-next, postcss, tailwindcss, @types/node, @types/react, @types/react-dom (+1 more)
 
 ### Community 63 - "KnowFlow AI — Enterprise Knowledge & SOP Agent"
 Cohesion: 0.15
@@ -447,17 +448,17 @@ Nodes (13): Architecture, Benchmark Results (Curated 15-Case Dataset), Core Feat
 Cohesion: 0.17
 Nodes (12): 4.10 Quotes & Testimonials, 4.11 Page Theme Lock (Light / Dark Mode Consistency), 4.1 Typography, 4.2 Color Calibration, 4.3 Layout Diversification, 4.4 Materiality, Shadows, Cards, 4.5 Interactive UI States, 4.6 Data & Form Patterns (+4 more)
 
-### Community 65 - "endpoints/health.py"
-Cohesion: 0.15
-Nodes (15): app_schemas_health, get_health(), liveness_probe(), Returns application health status, database connectivity, and auth state. Real…, Lightweight process liveness check. Returns 200 OK as long as the process is…, Deep readiness probe. Checks: - Database connectivity and pgvector extension…, readiness_probe(), get_auth_provider() (+7 more)
+### Community 65 - "hybrid_search"
+Cohesion: 0.38
+Nodes (6): hybrid_search(), AsyncSession, Executes hybrid (dense vector + sparse BM25) search across authorized company…, BaseModel, SearchChunkResult, SearchResponse
 
-### Community 66 - "README.md"
-Cohesion: 0.22
-Nodes (4): Domain Entity Model, KnowFlow AI — Architecture & Design Specification, Phase 1 Status: Foundation Verified, System Architecture
+### Community 66 - "SecurityHeadersMiddleware"
+Cohesion: 0.18
+Nodes (9): Request, Security headers middleware for production hardening. Adds HSTS, CSP, X-Frame-…, Inject security response headers into every HTTP response. Headers applied: -…, SecurityHeadersMiddleware, BaseHTTPMiddleware, Response, starlette_middleware_base, starlette_requests (+1 more)
 
 ### Community 67 - "KnowFlow AI — Portfolio Case Study"
-Cohesion: 0.20
-Nodes (10): Core RAG Pipeline, Engineering Highlights for Resume, Evaluation Framework, Grounded Answering Policy, Key Design Decision: HybridReranker, KnowFlow AI — Portfolio Case Study, Project Summary, Source Code (+2 more)
+Cohesion: 0.18
+Nodes (11): Core RAG Pipeline, Engineering Highlights for Resume, Evaluation Framework, Grounded Answering Policy, Key Design Decision: HybridReranker, KnowFlow AI — Portfolio Case Study, Production Hardening Implemented, Project Summary (+3 more)
 
 ### Community 68 - "10. REFERENCE VOCABULARY (Pattern Names the Agent Should Know)"
 Cohesion: 0.20
@@ -483,9 +484,9 @@ Nodes (9): 1. Protocol Overview, 2. Absolute Negative Constraints (Banned Elemen
 Cohesion: 0.20
 Nodes (9): 1. Query Performance (query), 2. Connection Management (conn), 3. Security & RLS (security), 4. Schema Design (schema), 5. Concurrency & Locking (lock), 6. Data Access Patterns (data), 7. Monitoring & Diagnostics (monitor), 8. Advanced Features (advanced) (+1 more)
 
-### Community 74 - "Disaster Recovery Runbook — KnowFlow AI"
-Cohesion: 0.22
-Nodes (9): Automated Daily pg_dump Backup, Backup Retention Policy, Backup Strategy, Connection Configuration, Disaster Recovery Runbook — KnowFlow AI, Overview, Restore Verification, Supabase Point-in-Time Recovery (PITR) (+1 more)
+### Community 74 - "audit_security.py"
+Cohesion: 0.33
+Nodes (9): check_gitignore(), main(), Security audit script for KnowFlow AI. Checks for: 1. Exposed secrets /…, Scan Python source files for hardcoded credential patterns., Scan .env files for wildcard CORS and DEBUG=True in production configs., Verify that .env files are excluded from git tracking., scan_env_files(), scan_python_sources() (+1 more)
 
 ### Community 75 - "11. COMPONENT EXECUTION GUIDELINES"
 Cohesion: 0.22
@@ -499,13 +500,13 @@ Nodes (9): 18. EXTRA CREATIVITY & IMPLEMENTATION EDGE, Composition variety check
 Cohesion: 0.22
 Nodes (8): Boundaries, Intensity, Output, Persistence, Ponytail, Rules, The ladder, When NOT to be lazy
 
-### Community 78 - "context.py"
-Cohesion: 0.16
-Nodes (17): app_api_v1_endpoints, app_api_v1_router, app_db_session, app_schemas_document, app_schemas_search, async_sessionmaker, Evaluation API Endpoints for KnowFlow AI. Runs automated RAG evaluation…, Request-scoped user context dependency. In PRODUCTION (settings.ENVIRONMENT ==… (+9 more)
+### Community 78 - "README.md"
+Cohesion: 0.22
+Nodes (4): Domain Entity Model, KnowFlow AI — Architecture & Design Specification, Phase 1 Status: Foundation Verified, System Architecture
 
-### Community 79 - "Demo Scenario Flow (10-minute walkthrough)"
-Cohesion: 0.25
-Nodes (8): Demo Scenario Flow (10-minute walkthrough), Scene 1: Document Ingestion (2 min), Scene 2: Known-Answer RAG Query (2 min), Scene 3: Grounding Policy Refusal (1.5 min), Scene 4: Admin Dashboard & Audit Logs (2 min), Scene 5: Search Interface (1 min), Scene 6: Health & Observability (1 min), Scene 7: Test Suite (30 sec)
+### Community 79 - "Disaster Recovery Runbook — KnowFlow AI"
+Cohesion: 0.22
+Nodes (9): Automated Daily pg_dump Backup, Backup Retention Policy, Backup Strategy, Connection Configuration, Disaster Recovery Runbook — KnowFlow AI, Overview, Restore Verification, Supabase Point-in-Time Recovery (PITR) (+1 more)
 
 ### Community 80 - "9. AI TELLS (Forbidden Patterns)"
 Cohesion: 0.25
@@ -523,9 +524,13 @@ Nodes (8): 8. ANTI-AI-SLOP RULES, Carousel / marquee slop (layout), Content slop
 Cohesion: 0.25
 Nodes (7): Configure Default Mode, Deactivate, Levels, More, Ponytail Help, Skills, Update
 
-### Community 86 - "devDependencies"
-Cohesion: 0.22
-Nodes (9): devDependencies, eslint, eslint-config-next, postcss, tailwindcss, @types/node, @types/react, @types/react-dom (+1 more)
+### Community 85 - "Settings"
+Cohesion: 0.32
+Nodes (5): Settings, test_cors_origins_parsing(), test_default_settings(), BaseSettings, field_validator
+
+### Community 86 - "Demo Scenario Flow (10-minute walkthrough)"
+Cohesion: 0.25
+Nodes (8): Demo Scenario Flow (10-minute walkthrough), Scene 1: Document Ingestion (2 min), Scene 2: Known-Answer RAG Query (2 min), Scene 3: Grounding Policy Refusal (1.5 min), Scene 4: Admin Dashboard & Audit Logs (2 min), Scene 5: Search Interface (1 min), Scene 6: Health & Observability (1 min), Scene 7: Test Suite (30 sec)
 
 ### Community 87 - "11. REDESIGN PROTOCOL"
 Cohesion: 0.29
@@ -571,13 +576,13 @@ Nodes (6): 5. IMAGE COUNT & PAGE SLICING, Continuity Rule, Counting rule, Format
 Cohesion: 0.33
 Nodes (5): How to Use, References, Rule Categories by Priority, Supabase Postgres Best Practices, When to Apply
 
-### Community 98 - "time"
-Cohesion: 0.22
-Nodes (9): concurrent_futures, dotenv, os, playwright_sync_api, requests, record(), test_backend_health(), sys (+1 more)
+### Community 98 - "test_dr_empirical_measurement.py"
+Cohesion: 0.12
+Nodes (21): asyncio, concurrent_futures, dotenv, hashlib, json, os, playwright_sync_api, requests (+13 more)
 
-### Community 99 - "test_admin.py"
-Cohesion: 0.60
-Nodes (4): TestClient, test_admin_audit_logs_endpoint(), test_admin_stats_endpoint(), test_evaluation_summary_endpoint()
+### Community 99 - "main.py"
+Cohesion: 0.29
+Nodes (6): app_api_router, app_core_security_headers, root(), collections_abc, contextlib, fastapi_middleware_cors
 
 ### Community 100 - "0. BRIEF INFERENCE (Read the Room Before Anything Else)"
 Cohesion: 0.40
@@ -611,17 +616,13 @@ Nodes (4): Boundaries, Honesty boundary, Ponytail Gain, Scoreboard
 Cohesion: 0.40
 Nodes (4): Boundaries, Examples, Format, Scoring
 
-### Community 108 - "supabase.py"
-Cohesion: 0.15
-Nodes (9): AuthProvider, ABC, Any, Abstract interface for authentication providers. Prevents hardcoding Supabase…, Verifies bearer token and returns AuthUser or None., Returns auth provider status and configuration state., Any, Supabase Auth implementation conforming to AuthProvider interface. (+1 more)
+### Community 108 - "endpoints/health.py"
+Cohesion: 0.10
+Nodes (21): app_schemas_health, get_health(), Returns application health status, database connectivity, and auth state. Real…, Deep readiness probe. Checks: - Database connectivity and pgvector extension…, readiness_probe(), AuthProvider, AuthUser, ABC (+13 more)
 
 ### Community 109 - "CLINICAL OPERATIONS SOP: REFRIGERATED STORAGE & COLD CHAIN INTEGRITY"
 Cohesion: 0.40
 Nodes (4): 1. Temperature Specifications and Monitoring, 2. Temperature Excursion Management, 3. Quarantine and Disposition Protocol, CLINICAL OPERATIONS SOP: REFRIGERATED STORAGE & COLD CHAIN INTEGRITY
-
-### Community 110 - "KnowFlow AI — Live Demo Guide"
-Cohesion: 0.40
-Nodes (5): Common Interview Questions & Answers, Files Reference, KnowFlow AI — Live Demo Guide, Prerequisites, Quick Start (Local)
 
 ### Community 111 - "Challenges & Learning"
 Cohesion: 0.33
@@ -663,9 +664,9 @@ Nodes (4): 20. EXAMPLE INTERPRETATIONS, Example 1, Example 2, Example 3
 Cohesion: 0.50
 Nodes (3): Boundaries, Output, Scan
 
-### Community 121 - "main.py"
-Cohesion: 0.14
-Nodes (14): app_api_router, app_core_security_headers, app_core_sentry, init_sentry(), Any, Sentry SDK integration for production error tracking. Initializes only when…, Strip PII / document content from Sentry event payloads., Initialize Sentry SDK with PII filtering. Args: dsn: Sentry Data Source Name… (+6 more)
+### Community 121 - "check_database_health"
+Cohesion: 0.20
+Nodes (11): downgrade(), check_database_health(), Any, Checks DB connectivity without crashing if unconfigured., lifespan(), 1. Executive Summary & Verification Matrix, 2. Architecture & Components, 3. Isolated Migration Lifecycle Evidence (+3 more)
 
 ### Community 122 - "frontend/README.md"
 Cohesion: 0.50
@@ -675,29 +676,45 @@ Nodes (3): Deploy on Vercel, Getting Started, Learn More
 Cohesion: 0.53
 Nodes (4): BackendStatusIndicator(), SystemHealthBadge(), fetchSystemHealth(), HealthData
 
-### Community 158 - "Emergency Failover Procedure"
+### Community 158 - "_scrub_event"
+Cohesion: 0.33
+Nodes (6): Any, Strip PII / document content from Sentry event payloads., _scrub_event(), _redact(), Verify that _scrub_event recursively redacts sensitive fields and PII., test_sentry_pii_scrubbing()
+
+### Community 160 - "get_session_factory"
+Cohesion: 0.40
+Nodes (5): async_sessionmaker, get_session_factory(), AsyncSession, Returns the async sessionmaker factory., main()
+
+### Community 161 - "KnowFlow AI — Live Demo Guide"
+Cohesion: 0.40
+Nodes (5): Common Interview Questions & Answers, Files Reference, KnowFlow AI — Live Demo Guide, Prerequisites, Quick Start (Local)
+
+### Community 162 - "Emergency Failover Procedure"
 Cohesion: 0.40
 Nodes (5): Emergency Failover Procedure, Step 1: Confirm the incident (< 5 minutes), Step 2: Assess recovery path (< 5 minutes), Step 3: Execute restore (< 20 minutes), Step 4: Verify (< 5 minutes)
 
+### Community 163 - "init_sentry"
+Cohesion: 0.50
+Nodes (4): init_sentry(), Initialize Sentry SDK with PII filtering. Args: dsn: Sentry Data Source Name…, Verify init_sentry handles empty DSN and missing package safely without…, test_sentry_initialization_safety()
+
 ## Knowledge Gaps
-- **686 isolated node(s):** `next/core-web-vitals`, `next/typescript`, `nextConfig`, `name`, `version` (+681 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1041 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **40 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **679 isolated node(s):** `next/core-web-vitals`, `next/typescript`, `nextConfig`, `name`, `version` (+674 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1057 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **42 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `UserContext` connect `UserContext` to `engine.py`, `verify_phase5_local.py`, `test_workspaces.py`, `endpoints/chat.py`, `admin.py`, `RankedChunk`, `context.py`, `test_production_auth.py`, `test_rag.py`, `llm.py`, `.retrieve`?**
-  _High betweenness centrality (0.037) - this node is a cross-community bridge._
-- **Why does `require_admin()` connect `test_production_auth.py` to `UserContext`, `admin.py`, `context.py`?**
-  _High betweenness centrality (0.035) - this node is a cross-community bridge._
-- **Why does `KnowFlow AI — Portfolio Case Study` connect `KnowFlow AI — Portfolio Case Study` to `README.md`, `test_production_auth.py`, `Challenges & Learning`?**
+- **Why does `UserContext` connect `UserContext` to `get_session_factory`, `production_smoke_test.py`, `documents.py`, `hybrid_search`, `test_workspaces.py`, `engine.py`, `llm.py`, `context.py`, `RankedChunk`, `endpoints/chat.py`, `admin.py`, `test_rag.py`?**
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+- **Why does `require_admin()` connect `UserContext` to `admin.py`, `context.py`, `KnowFlow AI — Portfolio Case Study`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
+- **Why does `KnowFlow AI — Portfolio Case Study` connect `KnowFlow AI — Portfolio Case Study` to `README.md`, `Challenges & Learning`?**
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
 - **Are the 21 inferred relationships involving `UserContext` (e.g. with `get_admin_stats()` and `get_audit_logs()`) actually correct?**
   _`UserContext` has 21 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 13 inferred relationships involving `RankedChunk` (e.g. with `GroundingEvaluator` and `BaseLLMProvider`) actually correct?**
   _`RankedChunk` has 13 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 4 inferred relationships involving `Base` (e.g. with `init_db()` and `test_document_chunk_model_fields()`) actually correct?**
+- **Are the 4 inferred relationships involving `Base` (e.g. with `test_document_chunk_model_fields()` and `test_document_model_fields()`) actually correct?**
   _`Base` has 4 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `next/core-web-vitals`, `next/typescript`, `nextConfig` to the rest of the system?**
-  _686 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _679 weakly-connected nodes found - possible documentation gaps or missing edges._

@@ -1,7 +1,10 @@
 import asyncio
 import logging
+import os
+from pathlib import Path
 
-from app.db.base import Base
+from alembic import command
+from alembic.config import Config
 from app.db.session import get_engine
 from sqlalchemy import text
 
@@ -9,33 +12,26 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("init_db")
 
 
-async def init_db():
+def run_alembic_upgrade():
+    """Run alembic upgrade head programmatically."""
+    backend_dir = Path(__file__).resolve().parent.parent.parent
+    ini_path = backend_dir / "alembic.ini"
+    alembic_dir = backend_dir / "alembic"
+    
+    logger.info("Applying Alembic migrations to head...")
+    cfg = Config(str(ini_path))
+    cfg.set_main_option("script_location", str(alembic_dir))
+    command.upgrade(cfg, "head")
+    logger.info("Alembic migrations applied successfully.")
+
+
+async def seed_default_data():
+    """Seed demo/default workspace and admin user if needed."""
     engine = get_engine()
     if engine is None:
         raise RuntimeError("Database engine not available. Check DATABASE_URL.")
 
-    logger.info("Connecting to database and initializing schema...")
-
     async with engine.begin() as conn:
-        # 1. Enable pgvector extension
-        logger.info("Enabling pgvector extension...")
-        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
-
-        # 2. Create all registered tables
-        logger.info("Creating tables...")
-        await conn.run_sync(Base.metadata.create_all)
-
-        # 3. Create HNSW index for vector cosine similarity retrieval
-        logger.info("Creating HNSW vector index on document_chunks...")
-        try:
-            await conn.execute(text(
-                "CREATE INDEX IF NOT EXISTS idx_document_chunks_embedding "
-                "ON document_chunks USING hnsw (embedding vector_cosine_ops);"
-            ))
-        except Exception as exc:
-            logger.warning(f"Note on HNSW index: {exc}")
-
-        # 4. Seed default workspace and admin user if not present
         logger.info("Verifying default demo workspace and admin user...")
         check_ws = await conn.execute(
             text("SELECT id FROM workspaces WHERE id = 'ws-default-001'")
@@ -57,8 +53,12 @@ async def init_db():
             ))
             logger.info("Seeded default admin: Compliance Lead")
 
-    logger.info("Database schema initialized successfully!")
+
+def init_db():
+    run_alembic_upgrade()
+    asyncio.run(seed_default_data())
 
 
 if __name__ == "__main__":
-    asyncio.run(init_db())
+    init_db()
+

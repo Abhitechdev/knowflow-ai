@@ -16,6 +16,7 @@ from app.schemas.document import (
     DocumentRead,
     DocumentUploadResponse,
 )
+from app.services.audit_service import AuditService
 from app.storage.service import storage_service
 from fastapi import (
     APIRouter,
@@ -108,6 +109,20 @@ async def upload_document(
     db.add(new_doc)
     await db.commit()
     await db.refresh(new_doc)
+
+    # Persist audit log for upload
+    await AuditService.log_event(
+        db=db,
+        workspace_id=user_context.workspace_id,
+        action="DOCUMENT_UPLOADED",
+        user_id=user_context.user_id,
+        metadata={
+            "document_id": doc_id,
+            "title": doc_title,
+            "file_type": ext,
+            "file_size_bytes": file_size,
+        },
+    )
 
     # 6. Queue ingestion pipeline in background
     background_tasks.add_task(_run_pipeline_in_background, doc_id)
@@ -243,6 +258,10 @@ async def delete_document(
     if not document:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found.")
 
+    doc_id = document.id
+    doc_title = document.title
+    doc_storage_path = document.storage_path
+
     # Delete from Supabase Storage
     try:
         await storage_service.delete_file(document.storage_path)
@@ -252,6 +271,19 @@ async def delete_document(
     # Delete from DB
     await db.delete(document)
     await db.commit()
+
+    # Persist audit log for deletion
+    await AuditService.log_event(
+        db=db,
+        workspace_id=user_context.workspace_id,
+        action="DOCUMENT_DELETED",
+        user_id=user_context.user_id,
+        metadata={
+            "document_id": doc_id,
+            "title": doc_title,
+            "storage_path": doc_storage_path,
+        },
+    )
 
 
 @router.post("/{document_id}/retry", response_model=DocumentRead)

@@ -36,8 +36,10 @@ def get_engine() -> AsyncEngine | None:
 
     connect_args = {}
     if url.startswith("postgresql"):
+        import uuid
         connect_args["statement_cache_size"] = 0
         connect_args["prepared_statement_cache_size"] = 0
+        connect_args["prepared_statement_name_func"] = lambda: f"__asyncpg_{uuid.uuid4().hex}__"
 
     try:
         if url.startswith("sqlite"):
