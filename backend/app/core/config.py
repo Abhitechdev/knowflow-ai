@@ -78,6 +78,8 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "openai"
     LLM_API_KEY: str = ""
     LLM_MODEL: str = "gpt-4o-mini"
+    GEMINI_API_KEY: str = ""
+    GOOGLE_API_KEY: str = ""
     EMBEDDING_PROVIDER: str = "openai"
     EMBEDDING_API_KEY: str = ""
     EMBEDDING_MODEL: str = "text-embedding-3-small"

@@ -8,6 +8,7 @@ from app.rag.base import (
 from app.rag.grounding import POLICY_NAME, GroundingEvaluator
 from app.rag.llm import (
     DeterministicLocalLLMProvider,
+    GeminiLLMProvider,
     OpenAILLMProvider,
     RAGService,
     get_llm_provider,
@@ -23,6 +24,7 @@ __all__ = [
     "POLICY_NAME",
     "CitationItem",
     "DeterministicLocalLLMProvider",
+    "GeminiLLMProvider",
     "GroundingAssessment",
     "GroundingEvaluator",
     "HybridRetriever",

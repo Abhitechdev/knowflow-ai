@@ -17,6 +17,15 @@ def get_embedding_provider() -> BaseEmbeddingProvider:
 
     provider_type = (settings.EMBEDDING_PROVIDER or "local").lower().strip()
 
+    if (provider_type == "jina" and settings.EMBEDDING_API_KEY) or (settings.EMBEDDING_API_KEY.startswith("jina_")):
+        try:
+            from app.embeddings.jina import JinaEmbeddingProvider
+            logger.info("Using JinaEmbeddingProvider (384 dimensions)")
+            _embedding_provider = JinaEmbeddingProvider()
+            return _embedding_provider
+        except Exception as e:
+            logger.warning(f"Failed to initialize JinaEmbeddingProvider: {e}. Falling back to LocalEmbeddingProvider.")
+
     if provider_type == "openai" and settings.EMBEDDING_API_KEY:
         try:
             from app.embeddings.openai import OpenAIEmbeddingProvider

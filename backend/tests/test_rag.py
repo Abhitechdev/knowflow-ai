@@ -168,3 +168,26 @@ def test_unauthorized_document_access():
     )
     admin_filter = retriever.build_auth_filter(admin_user)
     assert admin_filter is not None
+
+
+@pytest.mark.asyncio
+async def test_gemini_llm_provider():
+    """Verifies GeminiLLMProvider initialization and prompt building."""
+    from app.rag.llm import GeminiLLMProvider
+
+    provider = GeminiLLMProvider(api_key="test-key", model_name="models/gemini-1.5-flash")
+    assert provider.model_name == "gemini-1.5-flash"
+    assert provider.api_key == "test-key"
+
+
+@pytest.mark.asyncio
+async def test_jina_embedding_provider():
+    """Verifies JinaEmbeddingProvider initialization and 384-dimension configuration."""
+    from app.embeddings.jina import JinaEmbeddingProvider
+
+    provider = JinaEmbeddingProvider(api_key="test-key", model_name="jina-embeddings-v3")
+    assert provider.dimension == 384
+    assert provider.model_name == "jina-embeddings-v3"
+    assert provider.api_key == "test-key"
+
+
