@@ -12,25 +12,27 @@
 
 | Gate Check Area | Local Verdict | Cloud Verdict | Status |
 | :--- | :--- | :--- | :--- |
-| **A. Deployment Identity & Version** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **B. Supabase Auth Configuration** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **C. Real User Registration & Confirmation** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **D. Session Persistence & Protected Routes** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **E. Workspace Creation & Admin RBAC** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **F. Multi-Tenant Cross-Workspace Isolation** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **G. Document Ingestion, Search & Grounded RAG** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **H. Insufficient Evidence Refusal Policy** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **I. Prompt Injection & Jailbreak Defense** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **J. Database Persistence (Conversations/Feedback)** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **K. Server-Side RBAC Enforcement** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **L. Strict CORS Security & Origin Validation** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **M. Rate Limiting & Load Resiliency** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **N. Client Bundle Secret Exposure Audit** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **O. Zero Localhost / 127.0.0.1 Request Audit** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
-| **P. Password Reset & Recovery Redirect Flow** | `LOCAL PASS` | `CLOUD PASS` | **PASS** |
+| **A. Deployment Identity & Version** | `PASS` | `PASS` | **PASS** |
+| **B. Supabase Auth Configuration** | `PASS` | `PASS` | **PASS** |
+| **C. Real User Registration & Confirmation** | `PASS` | `PASS` | **PASS** |
+| **D. Session Persistence & Protected Routes** | `PASS` | `PASS` | **PASS** |
+| **E. Workspace Creation & Admin RBAC** | `PASS` | `PASS` | **PASS** |
+| **F. Multi-Tenant Cross-Workspace Isolation** | `PASS` | `PASS` | **PASS** |
+| **G. Document Ingestion, Search & Grounded RAG** | `PASS` | `PASS` | **PASS** |
+| **H. Insufficient Evidence Refusal Policy** | `PASS` | `PASS` | **PASS** |
+| **I. Prompt Injection & Jailbreak Defense** | `PASS` | `PASS` | **PASS** |
+| **J. Database Persistence (Conversations/Feedback)** | `PASS` | `PASS` | **PASS** |
+| **K. Server-Side RBAC Enforcement** | `PASS` | `PASS` | **PASS** |
+| **L. Strict CORS Security & Origin Validation** | `PASS` | `PASS` | **PASS** |
+| **M. Rate Limiting & Load Resiliency** | `PASS` | `FAIL` | **FAIL** |
+| **N. Client Bundle Secret Exposure Audit** | `PASS` | `PASS` | **PASS** |
+| **O. Zero Localhost / 127.0.0.1 Request Audit** | `PASS` | `PASS` | **PASS** |
+| **P. Password Reset & Recovery Redirect Flow** | `PASS` | `IN PROGRESS` | **IN PROGRESS** |
 
-### **GATE 5E STATUS: CLOSED**
-All 16 cloud E2E gates have been executed on the live staging cluster and verified with deterministic pass criteria.
+### **GATE 5E STATUS: NOT CLOSED**
+Gate 5E remains **NOT CLOSED** pending:
+1. **Render Cloud Rate Limiting Deployment**: The live Render web service must redeploy to run commit `27ed947` (or newer) to actively enforce HTTP 429 when bursting past the 60 req/min limit.
+2. **Password Recovery Live Verification**: Commit `a6e38e0` was pushed to trigger Vercel deployment of the recovery hash router and updated `redirectTo` callback. Verification on live Vercel is pending.
 
 ---
 
@@ -75,12 +77,18 @@ All 16 cloud E2E gates have been executed on the live staging cluster and verifi
 
 ---
 
-### C. Real User Registration & Confirmation Flow
-* **Test Account**: `e2e_register_797366@knowflow.test`
-* **Registration Action**: Submitted form via Playwright headless Chromium on `https://knowflow-ai-pied.vercel.app/register`.
-* **Action Link Navigation**: Navigated Supabase OTP verification token.
+### C. Real User Registration & Real SMTP Email Confirmation Flow
+* **Test Inbox**: `e2e_verify_3498f04b@uberip.com` (Real disposable mailbox via Mail.tm API).
+* **Supabase GoTrue Dispatch**: `POST https://jlbpfgfafobynepeytyl.supabase.co/auth/v1/signup` (`200 OK`, user ID `2fed8479-c444-4f42-a73f-fc4fb554276c`).
+* **Mailbox Ingestion**: Real email received from Supabase SMTP server with Subject: *"Confirm your email address"*.
+* **Extracted Confirmation URL**:
+  ```text
+  https://jlbpfgfafobynepeytyl.supabase.co/auth/v1/verify?token=8628f73f11a6a73fde7bb0184a77daa8565f0adcce122d18cd1cfb02&type=signup&redirect_to=https://knowflow-ai-pied.vercel.app
+  ```
+* **Browser Navigation**: Playwright navigated the real email link.
 * **Landed URL**: `https://knowflow-ai-pied.vercel.app/#access_token=eyJhbGci...&token_type=bearer&type=signup`
-* **Localhost Leaks**: `0` detected during complete registration cycle.
+* **Session Persistence**: Page reloaded; user remained authenticated with zero localhost / 127.0.0.1 network requests.
+* **Verdict**: `CLOUD PASS` (Verified with real SMTP delivery and external inbox receipt).
 
 ---
 
@@ -174,8 +182,10 @@ All 16 cloud E2E gates have been executed on the live staging cluster and verifi
 ---
 
 ### M. Rate Limiting & Load Resiliency
-* **Burst Test**: 15 rapid consecutive health probes sent to Render backend.
-* **Result**: Server remained stable and responsive (`15/15 200 OK`).
+* **Configured Threshold**: 60 requests/minute per client IP / user (Search), 25 requests/min (Chat).
+* **Cloud Burst Test**: Sent 74 rapid consecutive requests to `GET https://knowflow-ai-4ssd.onrender.com/api/v1/search?query=healthcheck_rate_limit`.
+* **Result**: `74/74` returned `401 Unauthorized` without HTTP `429 Too Many Requests` or `Retry-After` headers being triggered.
+* **Verdict**: `FAIL` (Pending Render deployment of sliding-window middleware in commit `27ed947`).
 
 ---
 
