@@ -6,21 +6,33 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { BookOpen } from "lucide-react";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
+export default function UpdatePasswordPage() {
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
     setLoading(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
+    const { error } = await supabase.auth.updateUser({
       password,
     });
 
@@ -30,8 +42,11 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/");
-    router.refresh();
+    setSuccess("Password updated successfully. Redirecting to sign in...");
+    setLoading(false);
+    setTimeout(() => {
+      router.push("/login");
+    }, 2000);
   };
 
   return (
@@ -42,61 +57,56 @@ export default function LoginPage() {
             <BookOpen className="h-6 w-6" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-text-primary">
-            Sign in to your account
+            Set new password
           </h2>
           <p className="mt-2 text-center text-sm text-text-muted">
-            Or{" "}
-            <Link href="/register" className="font-medium text-accent hover:underline">
-              create a new workspace
-            </Link>
+            Enter and confirm your new password
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+        <form className="mt-8 space-y-6" onSubmit={handleUpdate}>
           {error && (
             <div className="rounded-md bg-danger/10 p-4 border border-danger/20 text-sm text-danger">
               {error}
             </div>
           )}
+          {success && (
+            <div className="rounded-md bg-success/10 p-4 border border-success/20 text-sm text-success">
+              {success}
+            </div>
+          )}
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
+              <label htmlFor="password" className="sr-only">
+                New Password
               </label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="relative block w-full rounded-md border-0 bg-surface-muted py-2.5 px-3 text-text-primary ring-1 ring-inset ring-border placeholder:text-text-muted focus:z-10 focus:ring-2 focus:ring-inset focus:ring-accent sm:text-sm sm:leading-6"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="sr-only">
-                  Password
-                </label>
-              </div>
               <input
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="relative block w-full rounded-md border-0 bg-surface-muted py-2.5 px-3 text-text-primary ring-1 ring-inset ring-border placeholder:text-text-muted focus:z-10 focus:ring-2 focus:ring-inset focus:ring-accent sm:text-sm sm:leading-6"
-                placeholder="Password"
+                placeholder="New Password (min 6 characters)"
               />
-              <div className="mt-2 text-right">
-                <Link href="/reset-password" className="text-xs font-medium text-accent hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
+            </div>
+            <div>
+              <label htmlFor="confirm-password" className="sr-only">
+                Confirm New Password
+              </label>
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="relative block w-full rounded-md border-0 bg-surface-muted py-2.5 px-3 text-text-primary ring-1 ring-inset ring-border placeholder:text-text-muted focus:z-10 focus:ring-2 focus:ring-inset focus:ring-accent sm:text-sm sm:leading-6"
+                placeholder="Confirm New Password"
+              />
             </div>
           </div>
 
@@ -106,8 +116,14 @@ export default function LoginPage() {
               disabled={loading}
               className="flex w-full justify-center rounded-md bg-accent px-3 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Updating password..." : "Update Password"}
             </button>
+          </div>
+
+          <div className="text-center text-sm">
+            <Link href="/login" className="font-medium text-accent hover:underline">
+              Back to sign in
+            </Link>
           </div>
         </form>
       </div>

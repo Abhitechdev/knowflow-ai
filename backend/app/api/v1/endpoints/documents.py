@@ -1,6 +1,7 @@
 import logging
 import uuid
 
+from app.auth.context import UserContext, get_current_user_context
 from app.db.session import get_db, get_session_factory
 from app.ingestion.pipeline import (
     process_document_pipeline,
@@ -59,6 +60,7 @@ async def upload_document(
     department_id: str | None = Form(None),
     access_level: str = Form("WORKSPACE"),
     db: AsyncSession = Depends(get_db),
+    user_context: UserContext = Depends(get_current_user_context),
 ):
     """Uploads a real document (PDF, DOCX, TXT, MD, CSV) to Supabase Storage and initiates ingestion."""
     # 1. Read file bytes
@@ -74,7 +76,7 @@ async def upload_document(
     # 3. Clean filename and generate storage path
     clean_name = sanitize_filename(original_filename)
     doc_id = str(uuid.uuid4())
-    storage_path = f"{DEFAULT_WORKSPACE_ID}/{doc_id}_{clean_name}"
+    storage_path = f"{user_context.workspace_id}/{doc_id}_{clean_name}"
     doc_title = title.strip() if title and title.strip() else original_filename
 
     # 4. Upload to Supabase Storage
@@ -91,9 +93,9 @@ async def upload_document(
     # 5. Create database record
     new_doc = Document(
         id=doc_id,
-        workspace_id=DEFAULT_WORKSPACE_ID,
+        workspace_id=user_context.workspace_id,
         department_id=department_id if department_id else None,
-        uploaded_by_user_id=DEFAULT_USER_ID,
+        uploaded_by_user_id=user_context.user_id,
         title=doc_title,
         original_filename=original_filename,
         file_type=ext,
@@ -126,9 +128,10 @@ async def list_documents(
     department_id: str | None = Query(None),
     search: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
+    user_context: UserContext = Depends(get_current_user_context),
 ):
     """Lists real ingested documents from the database with pagination, filters, and chunk counts."""
-    base_stmt = select(Document).where(Document.workspace_id == DEFAULT_WORKSPACE_ID)
+    base_stmt = select(Document).where(Document.workspace_id == user_context.workspace_id)
 
     if status:
         base_stmt = base_stmt.where(Document.status == status.upper())
@@ -177,9 +180,10 @@ async def list_documents(
 async def get_document(
     document_id: str,
     db: AsyncSession = Depends(get_db),
+    user_context: UserContext = Depends(get_current_user_context),
 ):
     """Returns detailed information for a document, including extracted chunks and signed download URL."""
-    stmt = select(Document).where(Document.id == document_id)
+    stmt = select(Document).where(Document.id == document_id, Document.workspace_id == user_context.workspace_id)
     res = await db.execute(stmt)
     document = res.scalar_one_or_none()
 
@@ -229,9 +233,10 @@ async def get_document(
 async def delete_document(
     document_id: str,
     db: AsyncSession = Depends(get_db),
+    user_context: UserContext = Depends(get_current_user_context),
 ):
     """Deletes a document from Supabase Storage and PostgreSQL."""
-    stmt = select(Document).where(Document.id == document_id)
+    stmt = select(Document).where(Document.id == document_id, Document.workspace_id == user_context.workspace_id)
     res = await db.execute(stmt)
     document = res.scalar_one_or_none()
 
@@ -254,9 +259,10 @@ async def retry_document_processing(
     document_id: str,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
+    user_context: UserContext = Depends(get_current_user_context),
 ):
     """Retries processing for a failed document."""
-    stmt = select(Document).where(Document.id == document_id)
+    stmt = select(Document).where(Document.id == document_id, Document.workspace_id == user_context.workspace_id)
     res = await db.execute(stmt)
     document = res.scalar_one_or_none()
 

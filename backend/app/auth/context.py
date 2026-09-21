@@ -16,7 +16,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.auth.base import AuthUser
 from app.auth.supabase import get_auth_provider
 from app.core.config import settings
 from app.db.session import get_db
@@ -68,9 +68,15 @@ async def get_current_user_context(
             res = await db.execute(stmt)
             member = res.scalars().first()
 
-            workspace_id = member.workspace_id if member else DEFAULT_WORKSPACE_ID
-            department_id = member.department_id if member else None
-            role = member.role if member else auth_user.role
+            if not member:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="User has no workspace membership.",
+                )
+
+            workspace_id = member.workspace_id
+            department_id = member.department_id
+            role = member.role
 
             return UserContext(
                 user_id=auth_user.id,
@@ -135,3 +141,40 @@ async def require_admin(
             detail="Admin role required to access this resource.",
         )
     return ctx
+
+async def get_auth_user_only(
+    credentials: HTTPAuthorizationCredentials | None = Depends(security_scheme),
+) -> AuthUser:
+    """Validates JWT and returns AuthUser without requiring workspace membership."""
+    auth_provider = get_auth_provider()
+
+    if credentials and credentials.credentials:
+        auth_user = await auth_provider.verify_token(credentials.credentials)
+        if auth_user:
+            return auth_user
+        
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication token.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if settings.is_production:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required. Provide a valid Bearer token.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if not settings.allow_test_auth_bypass:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return AuthUser(
+        id=DEFAULT_USER_ID,
+        email=DEFAULT_EMAIL,
+        role="ADMIN"
+    )

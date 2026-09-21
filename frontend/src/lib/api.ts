@@ -372,3 +372,26 @@ export async function submitFeedback(params: { message_id: string; rating: numbe
   });
   return { success: !error };
 }
+
+// -----------------------------------------------------------------------------
+// Multi-Tenant Workspaces
+// -----------------------------------------------------------------------------
+export interface Workspace {
+  id: string;
+  name: string;
+  slug: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function createWorkspace(params: { name: string; slug: string }): Promise<{ data: Workspace | null; error?: string }> {
+  try {
+    const data = await fetchClient<Workspace>("/api/v1/workspaces", {
+      method: "POST",
+      body: JSON.stringify(params),
+    });
+    return { data };
+  } catch (e: any) {
+    return { data: null, error: e.message || "Failed to create workspace" };
+  }
+}

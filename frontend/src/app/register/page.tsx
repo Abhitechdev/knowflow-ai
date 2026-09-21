@@ -21,9 +21,17 @@ export default function RegisterPage() {
     setLoading(true);
 
     const supabase = createClient();
+    const siteUrl = typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : (process.env.NEXT_PUBLIC_SITE_URL || "https://knowflow-ai-pied.vercel.app");
+    const emailRedirectTo = `${siteUrl.replace(/\/$/, "")}/auth/callback`;
+
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo,
+      },
     });
 
     if (error) {

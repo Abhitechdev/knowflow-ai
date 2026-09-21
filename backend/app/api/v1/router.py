@@ -1,8 +1,9 @@
-from app.api.v1.endpoints import admin, chat, documents, evaluation, health, search
+from app.api.v1.endpoints import admin, chat, documents, evaluation, health, search, workspaces
 from fastapi import APIRouter
 
 api_v1_router = APIRouter()
 api_v1_router.include_router(health.router)
+api_v1_router.include_router(workspaces.router)
 api_v1_router.include_router(documents.router)
 api_v1_router.include_router(chat.router)
 api_v1_router.include_router(search.router)

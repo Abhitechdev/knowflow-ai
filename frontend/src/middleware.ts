@@ -4,8 +4,14 @@ import { updateSession } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { supabaseResponse, user } = await updateSession(request);
 
-  // Protect all routes except /login, /register, and static assets/api
-  const isAuthRoute = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register");
+  // Public auth-related routes that do not require an existing session
+  const pathname = request.nextUrl.pathname;
+  const isAuthRoute =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/update-password") ||
+    pathname.startsWith("/auth");
   
   if (!user && !isAuthRoute) {
     // No user, redirect to login
@@ -14,7 +20,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isAuthRoute) {
+  if (user && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
     // User is already logged in, redirect to dashboard
     const url = request.nextUrl.clone();
     url.pathname = "/";

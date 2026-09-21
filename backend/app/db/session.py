@@ -36,6 +36,7 @@ def get_engine() -> AsyncEngine | None:
 
     connect_args = {}
     if url.startswith("postgresql"):
+        connect_args["statement_cache_size"] = 0
         connect_args["prepared_statement_cache_size"] = 0
 
     try:
