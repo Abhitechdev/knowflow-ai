@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
   FileText,
@@ -51,6 +52,7 @@ export default function HomePage() {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const router = useRouter();
   const supabase = createClient();
 
   const loadWorkspaceData = async () => {
@@ -81,6 +83,18 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    // Check if landing with a password recovery token in URL hash
+    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) {
+      router.push(`/update-password${window.location.hash}`);
+      return;
+    }
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        router.push("/update-password");
+      }
+    });
+
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
@@ -90,7 +104,11 @@ export default function HomePage() {
       }
     }
     checkAuth();
-  }, [supabase.auth]);
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase.auth, router]);
 
   if (loading) {
     return (

@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
     const siteUrl = typeof window !== "undefined" && window.location.origin
       ? window.location.origin
       : (process.env.NEXT_PUBLIC_SITE_URL || "https://knowflow-ai-pied.vercel.app");
-    const redirectTo = `${siteUrl.replace(/\/$/, "")}/update-password`;
+    const redirectTo = `${siteUrl.replace(/\/$/, "")}/auth/callback?next=/update-password`;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo,
