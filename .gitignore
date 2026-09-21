@@ -13,6 +13,7 @@ frontend/.env.local
 !backend/.env.production.example
 !frontend/.env.example
 !frontend/.env.production.example
+tokens.json
 
 # ── Python ───────────────────────────────────────────────────────────
 venv/

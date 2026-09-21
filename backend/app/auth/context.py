@@ -10,6 +10,8 @@ In non-production environments (development, test):
     so the dev server remains usable without Supabase credentials.
 """
 import logging
+import re
+import uuid
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -20,7 +22,8 @@ from app.auth.base import AuthUser
 from app.auth.supabase import get_auth_provider
 from app.core.config import settings
 from app.db.session import get_db
-from app.models.workspace import WorkspaceMember
+from app.models.user import User
+from app.models.workspace import Workspace, WorkspaceMember
 
 logger = logging.getLogger(__name__)
 security_scheme = HTTPBearer(auto_error=False)
@@ -69,10 +72,58 @@ async def get_current_user_context(
             member = res.scalars().first()
 
             if not member:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="User has no workspace membership.",
+                # Auto-provision dedicated isolated workspace for new authenticated user
+                stmt_user = select(User).where(User.id == auth_user.id)
+                res_user = await db.execute(stmt_user)
+                user = res_user.scalars().first()
+                if not user:
+                    user = User(
+                        id=auth_user.id,
+                        email=auth_user.email,
+                        full_name=auth_user.email.split("@")[0].capitalize(),
+                        role="ADMIN",
+                        is_active=True,
+                    )
+                    db.add(user)
+
+                clean_name = auth_user.email.split("@")[0].capitalize()
+                slug_prefix = re.sub(r"[^a-z0-9]+", "-", auth_user.email.split("@")[0].lower()).strip("-") or "workspace"
+                workspace_slug = f"{slug_prefix}-{auth_user.id[:8]}"
+
+                stmt_ws = select(Workspace).where(Workspace.slug == workspace_slug)
+                res_ws = await db.execute(stmt_ws)
+                existing_ws = res_ws.scalars().first()
+                if existing_ws:
+                    workspace_id = existing_ws.id
+                else:
+                    workspace_id = str(uuid.uuid4())
+                    new_workspace = Workspace(
+                        id=workspace_id,
+                        name=f"{clean_name}'s Workspace",
+                        slug=workspace_slug,
+                    )
+                    db.add(new_workspace)
+
+                member = WorkspaceMember(
+                    id=str(uuid.uuid4()),
+                    workspace_id=workspace_id,
+                    user_id=auth_user.id,
+                    role="ADMIN",
                 )
+                db.add(member)
+                try:
+                    await db.commit()
+                except Exception as e:
+                    await db.rollback()
+                    logger.warning(f"Error auto-provisioning workspace for {auth_user.id}: {e}")
+                    stmt_retry = select(WorkspaceMember).where(WorkspaceMember.user_id == auth_user.id)
+                    res_retry = await db.execute(stmt_retry)
+                    member = res_retry.scalars().first()
+                    if not member:
+                        raise HTTPException(
+                            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail="Failed to initialize user workspace.",
+                        )
 
             workspace_id = member.workspace_id
             department_id = member.department_id

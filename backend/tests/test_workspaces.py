@@ -168,15 +168,21 @@ async def test_get_current_user_context_resolves_new_membership():
 # ------------------------------------------------------------------ #
 # I: Real authenticated user with NO membership raises HTTP 403      #
 # ------------------------------------------------------------------ #
+# I: Real authenticated user without initial membership gets auto-provisioned workspace #
+# ------------------------------------------------------------------ #
 @pytest.mark.asyncio
 async def test_authenticated_user_with_no_membership_cannot_fallback_to_default_workspace():
     mock_db = AsyncMock()
-    # No membership found in DB
+    # No initial membership found in DB
     mock_scalars = MagicMock()
     mock_scalars.first.return_value = None
     mock_result = MagicMock()
     mock_result.scalars.return_value = mock_scalars
     mock_db.execute.return_value = mock_result
+
+    added_objects = []
+    mock_db.add = MagicMock(side_effect=lambda obj: added_objects.append(obj))
+    mock_db.commit = AsyncMock()
 
     mock_credentials = MagicMock()
     mock_credentials.credentials = "valid-token-for-unassigned-user"
@@ -188,11 +194,19 @@ async def test_authenticated_user_with_no_membership_cannot_fallback_to_default_
         mock_provider.verify_token.return_value = auth_user
         mock_get_provider.return_value = mock_provider
 
-        with pytest.raises(HTTPException) as exc_info:
-            await get_current_user_context(credentials=mock_credentials, db=mock_db)
+        ctx = await get_current_user_context(credentials=mock_credentials, db=mock_db)
 
-        assert exc_info.value.status_code == 403
-        assert "no workspace membership" in exc_info.value.detail
+        # Must NOT be the shared dev fallback default
+        assert ctx.workspace_id != DEFAULT_WORKSPACE_ID
+        assert ctx.user_id == "usr-no-ws"
+        assert ctx.email == "orphan@test.com"
+        assert ctx.is_admin is True
+
+        # Must have created isolated workspace & member
+        workspaces_added = [o for o in added_objects if isinstance(o, Workspace)]
+        assert len(workspaces_added) == 1
+        assert "orphan" in workspaces_added[0].slug
+
 
 
 # ------------------------------------------------------------------ #
