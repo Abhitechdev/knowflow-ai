@@ -150,7 +150,7 @@ export default function RegisterPage() {
               href="/security"
               className="inline-flex items-center gap-1.5 text-[11px] text-text-muted hover:text-text-primary transition-colors"
             >
-              <ShieldCheck className="h-3.5 w-3.5 text-success" /> DPDPA 2023 Compliant • Enterprise Isolation
+              <ShieldCheck className="h-3.5 w-3.5 text-success" /> DPDPA 2023 & GDPR Aligned Controls • Enterprise Isolation
             </Link>
           </div>
         </div>

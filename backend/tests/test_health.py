@@ -26,3 +26,39 @@ def test_v1_health_alias(client):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] in ("healthy", "degraded")
+
+
+def test_cors_trusted_origin_allowed(client):
+    response = client.options(
+        "/api/health",
+        headers={
+            "Origin": "https://knowflow-ai-pied.vercel.app",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == "https://knowflow-ai-pied.vercel.app"
+
+
+def test_cors_attacker_origin_rejected(client):
+    response = client.options(
+        "/api/health",
+        headers={
+            "Origin": "https://attacker.example",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    # Origin is not trusted, so access-control-allow-origin must not be returned
+    assert response.headers.get("access-control-allow-origin") is None
+
+
+def test_cors_arbitrary_vercel_origin_rejected(client):
+    response = client.options(
+        "/api/health",
+        headers={
+            "Origin": "https://arbitrary-attacker.vercel.app",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert response.headers.get("access-control-allow-origin") is None
+

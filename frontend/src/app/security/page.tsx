@@ -61,28 +61,28 @@ export default function SecurityPage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-surface-muted/50 to-background py-16 sm:py-24">
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success/10 px-3.5 py-1 text-xs font-medium text-success mb-6">
-            <ShieldCheck className="h-4 w-4" /> DPDPA 2023 & GDPR Aligned Architecture
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1 text-xs font-medium text-text-primary mb-6">
+            <ShieldCheck className="h-4 w-4 text-accent" /> Security and Privacy Controls Architecture
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl text-text-primary">
-            Enterprise Security, Data Sovereignty & DPDP Act Compliance
+            Security and Privacy Controls Implemented by KnowFlow AI
           </h1>
           <p className="mt-4 text-base sm:text-lg text-text-muted max-w-3xl mx-auto leading-relaxed">
-            KnowFlow AI is engineered from the ground up to protect enterprise Standard Operating Procedures, intellectual property, and personal data with zero compromise.
+            Detailed technical and organizational controls designed to protect enterprise Standard Operating Procedures, intellectual property, and personal data.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-4 text-xs text-text-secondary">
             <div className="flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5">
-              <CheckCircle2 className="h-4 w-4 text-success" /> AES-256 & TLS 1.3 Encryption
+              <CheckCircle2 className="h-4 w-4 text-success" /> AES-256 Storage & TLS 1.3 Transit
             </div>
             <div className="flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5">
-              <CheckCircle2 className="h-4 w-4 text-success" /> Zero Model Training Guarantee
+              <CheckCircle2 className="h-4 w-4 text-success" /> Zero AI Model Training Policy
             </div>
             <div className="flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5">
-              <CheckCircle2 className="h-4 w-4 text-success" /> Strict Multi-Tenant Isolation
+              <CheckCircle2 className="h-4 w-4 text-success" /> Row-Level Multi-Tenant Isolation
             </div>
             <div className="flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5">
-              <CheckCircle2 className="h-4 w-4 text-success" /> Immutable Audit Telemetry
+              <CheckCircle2 className="h-4 w-4 text-success" /> Audit Logging & Access Telemetry
             </div>
           </div>
         </div>

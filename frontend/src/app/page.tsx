@@ -362,7 +362,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8 space-y-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-xs font-medium text-text-primary">
             <Sparkles className="h-3.5 w-3.5 text-accent" />
-            Deterministic RAG • Zero Hallucinations • DPDPA 2023 Aligned
+            Deterministic RAG • Grounded Answering • DPDPA 2023 & GDPR Aligned Controls
           </div>
 
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-text-primary leading-tight">
@@ -387,7 +387,7 @@ export default function HomePage() {
               href="/security"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-8 py-3.5 text-sm font-medium text-text-primary hover:bg-surface-hover transition-colors"
             >
-              <ShieldCheck className="h-4 w-4 text-success" /> Explore Security & DPDP Compliance
+              <ShieldCheck className="h-4 w-4 text-success" /> Explore Security & Privacy Controls
             </Link>
           </div>
 
@@ -395,16 +395,16 @@ export default function HomePage() {
           <div className="pt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
             <div className="rounded-xl border border-border bg-surface p-4 space-y-1">
               <div className="font-semibold text-sm text-text-primary flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-success" /> 100% Grounded
+                <CheckCircle2 className="h-4 w-4 text-success" /> Grounded Citations
               </div>
               <p className="text-[11px] text-text-muted">Strict refusal policy prevents model guessing.</p>
             </div>
 
             <div className="rounded-xl border border-border bg-surface p-4 space-y-1">
               <div className="font-semibold text-sm text-text-primary flex items-center gap-1.5">
-                <Scale className="h-4 w-4 text-success" /> DPDP Act 2023
+                <Scale className="h-4 w-4 text-success" /> DPDP Act Controls
               </div>
-              <p className="text-[11px] text-text-muted">Full statutory data principal rights & safeguards.</p>
+              <p className="text-[11px] text-text-muted">Data principal rights and reasonable security safeguards.</p>
             </div>
 
             <div className="rounded-xl border border-border bg-surface p-4 space-y-1">
@@ -523,7 +523,7 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
-                  <span><strong>DPDPA & GDPR Compliant:</strong> Customer data is isolated in private PostgreSQL partitions and never shared for model training.</span>
+                  <span><strong>DPDPA & GDPR Aligned Controls:</strong> Customer data is isolated in private PostgreSQL partitions and never shared for model training.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
@@ -538,48 +538,36 @@ export default function HomePage() {
       {/* Final Call to Action */}
       <section className="py-20 bg-gradient-to-t from-surface-muted/60 to-background">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8 space-y-6">
-          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-text-primary">
-            Ready to Empower Your Teams with Grounded Knowledge?
+          <h2 className="text-3xl font-extrabold text-text-primary">
+            Ready to Empower Your Organization with Grounded SOPs?
           </h2>
           <p className="text-sm text-text-muted max-w-xl mx-auto">
-            Set up your organization&apos;s workspace in less than 2 minutes. Upload your SOPs and start querying with confidence.
+            Stop guessing. Ensure every team member gets exact, verified answers from your source documents.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
+          <div className="flex justify-center gap-4 pt-2">
             <Link
               href="/register"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3.5 text-sm font-semibold text-accent-foreground hover:bg-accent/90 transition-all shadow-lg"
+              className="rounded-xl bg-accent px-8 py-3 text-sm font-semibold text-accent-foreground hover:bg-accent/90 transition-colors shadow-md"
             >
-              Get Started with KnowFlow <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center rounded-xl border border-border bg-surface px-8 py-3.5 text-sm font-medium text-text-primary hover:bg-surface-hover transition-colors"
-            >
-              Sign In to Your Workspace
+              Get Started Free
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Public Footer */}
-      <footer className="border-t border-border bg-surface py-12 text-xs text-text-muted">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center space-x-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-surface-muted text-accent">
-              <BookOpen className="h-4 w-4" />
-            </div>
-            <span className="font-semibold text-text-primary">KnowFlow AI</span>
-            <span>&copy; 2026 KnowFlow AI. All rights reserved.</span>
+      {/* Footer */}
+      <footer className="border-t border-border bg-surface py-8 text-xs text-text-muted">
+        <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-2">
+            <ShieldCheck className="h-4 w-4 text-accent" />
+            <span>&copy; 2026 KnowFlow AI. Enterprise Knowledge & SOP Assistant.</span>
           </div>
-
-          <div className="flex flex-wrap items-center gap-6">
-            <a href="#capabilities" className="hover:text-text-primary transition-colors">Capabilities</a>
-            <a href="#architecture" className="hover:text-text-primary transition-colors">Architecture</a>
+          <div className="flex items-center space-x-6">
             <Link href="/security" className="hover:text-text-primary transition-colors flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-success" /> DPDP Act & Security
+              <ShieldCheck className="h-3.5 w-3.5 text-success" /> Security & Privacy Controls
             </Link>
             <Link href="/login" className="hover:text-text-primary transition-colors">Sign In</Link>
-            <Link href="/register" className="hover:text-text-primary transition-colors font-medium text-text-primary">Register</Link>
+            <Link href="/register" className="hover:text-text-primary transition-colors">Register</Link>
           </div>
         </div>
       </footer>
