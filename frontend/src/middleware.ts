@@ -4,17 +4,19 @@ import { updateSession } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const { supabaseResponse, user } = await updateSession(request);
 
-  // Public auth-related routes that do not require an existing session
+  // Public routes that do not require an existing session
   const pathname = request.nextUrl.pathname;
-  const isAuthRoute =
+  const isPublicRoute =
+    pathname === "/" ||
+    pathname.startsWith("/security") ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
     pathname.startsWith("/reset-password") ||
     pathname.startsWith("/update-password") ||
     pathname.startsWith("/auth");
   
-  if (!user && !isAuthRoute) {
-    // No user, redirect to login
+  if (!user && !isPublicRoute) {
+    // Unauthenticated user attempting to access protected route (e.g. /chat, /documents, /admin)
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

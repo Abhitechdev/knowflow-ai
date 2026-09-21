@@ -72,10 +72,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return pathname.startsWith(href);
   };
 
-  const isAuthRoute = pathname === "/login" || pathname === "/register";
+  const isPublicRoute =
+    pathname.startsWith("/security") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/reset-password") ||
+    pathname.startsWith("/update-password") ||
+    (pathname === "/" && !userEmail);
 
-  if (isAuthRoute) {
-    return <>{children}</>;
+  if (isPublicRoute) {
+    return <div className="min-h-screen bg-background text-text-primary">{children}</div>;
   }
 
   return (
