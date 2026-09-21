@@ -15,8 +15,8 @@ import {
   BookOpen,
   User,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
-import { BackendStatusIndicator } from "./backend-status-indicator";
 import { createClient } from "@/lib/supabase/client";
 
 interface NavItem {
@@ -41,8 +41,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
-  
-  const envName = process.env.NEXT_PUBLIC_ENV || "development";
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -53,7 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setUserEmail(session?.user?.email ?? null);
-      if (event === 'SIGNED_OUT') {
+      if (event === "SIGNED_OUT") {
         router.push("/login");
       }
     });
@@ -95,33 +93,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="font-semibold text-sm tracking-tight text-text-primary">KnowFlow AI</span>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <BackendStatusIndicator compact />
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="rounded-md p-1.5 text-text-muted hover:bg-surface-hover hover:text-text-primary"
-            aria-label="Toggle Menu"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="rounded-md p-1.5 text-text-muted hover:bg-surface-hover hover:text-text-primary"
+          aria-label="Toggle Menu"
+        >
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
 
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-64 flex-col justify-between border-r border-border bg-surface p-4 shrink-0 sticky top-0 h-screen">
         <div className="space-y-6">
           {/* Logo / Brand */}
-          <div className="flex items-center space-x-3 px-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-muted text-accent shadow-sm">
+          <Link href="/" className="flex items-center space-x-3 px-2 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-muted text-accent shadow-sm group-hover:scale-105 transition-transform">
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
                 <span className="font-semibold text-sm tracking-tight text-text-primary">KnowFlow AI</span>
               </div>
-              <p className="text-[11px] text-text-muted">Enterprise SOP Agent</p>
+              <p className="text-[11px] text-text-muted">Enterprise SOP Assistant</p>
             </div>
-          </div>
+          </Link>
 
           {/* Navigation Links */}
           <nav className="space-y-1">
@@ -153,18 +148,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
 
-        {/* Bottom Sidebar: Real Backend Status & User Profile */}
+        {/* Bottom Sidebar: User Profile & Compliance */}
         <div className="space-y-3 pt-4 border-t border-border">
-          <BackendStatusIndicator />
+          <Link
+            href="/security"
+            className="flex items-center justify-between rounded-lg border border-border bg-surface-muted/50 px-3 py-2 text-[11px] text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
+          >
+            <div className="flex items-center space-x-2">
+              <ShieldCheck className="h-3.5 w-3.5 text-success" />
+              <span>DPDPA & Security</span>
+            </div>
+            <span className="text-[10px] text-success font-medium">Active</span>
+          </Link>
 
           <div className="flex items-center justify-between rounded-lg border border-border bg-surface-muted p-2.5">
             <div className="flex items-center space-x-2.5 min-w-0">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-surface text-text-muted">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-surface text-text-muted shrink-0">
                 <User className="h-3.5 w-3.5" />
               </div>
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-text-primary truncate">{userEmail || "User"}</p>
-                <button onClick={handleSignOut} className="text-[10px] text-text-muted hover:text-text-primary truncate cursor-pointer transition-colors text-left flex items-center space-x-1">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-text-primary truncate">{userEmail || "Workspace User"}</p>
+                <button
+                  onClick={handleSignOut}
+                  className="text-[11px] text-text-muted hover:text-danger cursor-pointer transition-colors text-left flex items-center space-x-1 mt-0.5"
+                >
                   <span>Sign out</span>
                   <LogOut className="h-2.5 w-2.5" />
                 </button>
@@ -218,7 +225,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="space-y-3 pt-4 border-t border-border">
-              <BackendStatusIndicator />
+              <div className="flex items-center justify-between p-2">
+                <span className="text-xs text-text-muted truncate">{userEmail}</span>
+                <button onClick={handleSignOut} className="text-xs text-danger font-medium">
+                  Sign out
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -226,23 +238,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Desktop Top Bar */}
-        <header className="hidden md:flex h-14 items-center justify-between border-b border-border bg-surface px-6 backdrop-blur-sm">
-          <div className="flex items-center space-x-3">
-            <span className="text-xs font-medium text-text-muted">Environment:</span>
-            <span className="rounded-md border border-border bg-surface-muted px-2 py-0.5 font-mono text-[11px] text-text-primary capitalize">
-              {envName}
-            </span>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <BackendStatusIndicator compact />
-            <div className="h-4 w-px bg-border" />
-            <span className="text-xs text-text-muted">v0.1.0</span>
-          </div>
-        </header>
-
-        {/* Page Content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
           {children}
         </main>

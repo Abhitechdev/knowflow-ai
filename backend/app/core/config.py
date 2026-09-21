@@ -25,19 +25,37 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
+        "https://knowflow-ai-pied.vercel.app",
+        "https://knowflow-ai.vercel.app",
     ]
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, v: str | list[str]) -> list[str]:
+        origins = []
         if isinstance(v, str):
             if v.startswith("[") and v.endswith("]"):
                 try:
-                    return json.loads(v)
+                    origins = json.loads(v)
                 except Exception:
-                    pass
-            return [origin.strip() for origin in v.split(",") if origin.strip()]
-        return v
+                    origins = [origin.strip() for origin in v.split(",") if origin.strip()]
+            else:
+                origins = [origin.strip() for origin in v.split(",") if origin.strip()]
+        elif isinstance(v, list):
+            origins = list(v)
+
+        # Ensure core known domains and staging domains are always included
+        known = [
+            "https://knowflow-ai-pied.vercel.app",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+        ]
+        for k in known:
+            if k not in origins:
+                origins.append(k)
+
+        # Normalize trailing slashes
+        return [o.rstrip("/") for o in origins if o]
 
     # ------------------------------------------------------------------ #
     # Database                                                            #

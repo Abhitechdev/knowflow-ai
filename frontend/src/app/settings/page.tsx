@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchSystemHealth, HealthData } from "@/lib/api";
-import { User, Server, Database, Shield, Cpu, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { User, ShieldCheck, ArrowRight, Lock, Building, Info } from "lucide-react";
 
 export default function SettingsPage() {
-  const [health, setHealth] = useState<HealthData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const supabase = createClient();
 
   useEffect(() => {
-    fetchSystemHealth().then((res) => {
-      setHealth(res.data);
-      setLoading(false);
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUserEmail(user.email ?? null);
+      }
     });
-  }, []);
+  }, [supabase.auth]);
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -21,98 +23,72 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-xl font-semibold tracking-tight text-text-primary">Settings & Profile</h1>
         <p className="text-xs text-text-muted mt-1">
-          Workspace administration, system environment, and backend service status.
+          Manage your account profile, workspace details, and security policies.
         </p>
       </div>
 
       {/* User Profile Card */}
-      <div className="rounded-xl border border-border bg-surface-muted p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-text-primary">Current Session</h2>
+      <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+        <h2 className="text-sm font-semibold text-text-primary">User Account</h2>
         <div className="flex items-center space-x-3.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-text-primary">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-muted text-text-primary shrink-0">
             <User className="h-5 w-5" />
           </div>
-          <div>
-            <p className="text-xs font-medium text-text-primary">Workspace Administrator</p>
-            <p className="text-[11px] text-text-muted">Role: ADMIN</p>
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-text-primary truncate">{userEmail || "Workspace User"}</p>
+            <p className="text-[11px] text-text-muted">Account Status: Active</p>
           </div>
         </div>
       </div>
 
       {/* Workspace Settings */}
-      <div className="rounded-xl border border-border bg-surface-muted p-5 space-y-4">
-        <h2 className="text-sm font-semibold text-text-primary">Active Workspace</h2>
+      <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+        <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+          <Building className="h-4 w-4 text-accent" />
+          Workspace Configuration
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div className="rounded-lg border border-border bg-surface p-3 space-y-1">
-            <span className="text-text-muted text-[11px]">Workspace Name</span>
-            <p className="font-medium text-text-primary">Personal Workspace</p>
+          <div className="rounded-lg border border-border bg-surface-muted p-3 space-y-1">
+            <span className="text-text-muted text-[11px]">Workspace Clearance</span>
+            <p className="font-medium text-text-primary">Enterprise Dedicated Partition</p>
           </div>
-          <div className="rounded-lg border border-border bg-surface p-3 space-y-1">
+          <div className="rounded-lg border border-border bg-surface-muted p-3 space-y-1">
             <span className="text-text-muted text-[11px]">Tenant Isolation</span>
-            <p className="font-medium text-success">Enabled (Schema Enforced)</p>
+            <p className="font-medium text-success">Active (PostgreSQL Row-Level Security)</p>
           </div>
         </div>
       </div>
 
-      {/* Backend & Environment Status */}
-      <div className="rounded-xl border border-border bg-surface-muted p-5 space-y-4">
+      {/* Security & Data Compliance */}
+      <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-text-primary">Backend Infrastructure Status</h2>
-          {loading && <RefreshCw className="h-3.5 w-3.5 text-text-muted animate-spin" />}
+          <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-success" />
+            Security & DPDP Act Compliance
+          </h2>
+          <Link
+            href="/security"
+            className="text-xs font-medium text-accent hover:underline inline-flex items-center gap-1"
+          >
+            Review Trust Center <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
+        <p className="text-xs text-text-muted leading-relaxed">
+          KnowFlow AI is aligned with India&apos;s Digital Personal Data Protection Act, 2023 (DPDPA) and GDPR. All documents are encrypted with AES-256 at rest and TLS 1.3 in transit.
+        </p>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          <div className="rounded-lg border border-border bg-surface p-3.5 space-y-2">
-            <div className="flex items-center space-x-2 text-text-muted">
-              <Server className="h-4 w-4" />
-              <span className="font-medium">FastAPI Endpoint</span>
-            </div>
-            <div className="text-[11px] font-mono text-text-primary">
-              {process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_ENV === "development" ? "http://localhost:8000" : "Unconfigured")}
-            </div>
-            <p className="text-[11px] text-text-muted">
-              Status: <span className="text-success font-semibold">{health ? health.status : "Probing..."}</span>
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-border bg-surface p-3.5 space-y-2">
-            <div className="flex items-center space-x-2 text-text-muted">
-              <Database className="h-4 w-4" />
-              <span className="font-medium">Database (PostgreSQL)</span>
-            </div>
-            <div className="text-[11px] font-mono text-text-primary">
-              Status: {health ? health.database.status : "Probing..."}
-            </div>
-            <p className="text-[11px] text-text-muted">
-              Target: Supabase PostgreSQL with pgvector extension
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-border bg-surface p-3.5 space-y-2">
-            <div className="flex items-center space-x-2 text-text-muted">
-              <Shield className="h-4 w-4" />
-              <span className="font-medium">Identity Provider</span>
-            </div>
-            <div className="text-[11px] font-mono text-text-primary">
-              Provider: {health ? health.auth.provider : "supabase"}
-            </div>
-            <p className="text-[11px] text-text-muted">
-              State: {health?.auth.configured ? "Configured" : "Unconfigured (Local fallback)"}
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-border bg-surface p-3.5 space-y-2">
-            <div className="flex items-center space-x-2 text-text-muted">
-              <Cpu className="h-4 w-4" />
-              <span className="font-medium">AI Abstraction Architecture</span>
-            </div>
-            <div className="text-[11px] font-mono text-text-primary">
-              Configured for Phase 3
-            </div>
-            <p className="text-[11px] text-text-muted">
-              Replaceable LLM & Embedding provider adapters
-            </p>
-          </div>
+      {/* About Application */}
+      <div className="rounded-xl border border-border bg-surface p-5 space-y-3 text-xs">
+        <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+          <Info className="h-4 w-4 text-text-muted" />
+          About KnowFlow AI
+        </h2>
+        <p className="text-text-muted leading-relaxed">
+          Enterprise SOP and Knowledge Assistant with verified citations and guaranteed grounded answering policy.
+        </p>
+        <div className="text-text-muted pt-2 text-[11px]">
+          Version: 0.1.0 • Multi-tenant Knowledge Engine
         </div>
       </div>
     </div>

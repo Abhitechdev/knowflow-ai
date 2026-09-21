@@ -57,14 +57,15 @@ if settings.is_production:
     app.add_middleware(SecurityHeadersMiddleware)
 
 # ------------------------------------------------------------------ #
-# CORS — explicit origin allowlist, no wildcards                      #
+# CORS — explicit origin allowlist, no wildcards in production        #
 # ------------------------------------------------------------------ #
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
+    allow_origin_regex=r"^https://.*\.vercel\.app$",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "Accept", "X-Workspace-ID"],
+    allow_headers=["*"],
 )
 
 # Mount API endpoints

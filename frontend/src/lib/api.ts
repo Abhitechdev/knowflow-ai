@@ -17,15 +17,31 @@ interface FetchOptions extends RequestInit {
   skipAuth?: boolean;
 }
 
+export function getSafeErrorMessage(status: number, rawMessage?: string): string {
+  if (status === 401) return "Your session has expired. Please sign in again.";
+  if (status === 403) return "You don't have permission to perform this action.";
+  if (status === 404) return "We couldn't find that resource.";
+  if (status === 429) return "Too many requests. Please wait a moment and try again.";
+  if (status >= 500) return "Something went wrong while connecting to KnowFlow. Please try again.";
+  
+  if (rawMessage && !rawMessage.includes("http") && !rawMessage.includes("Traceback") && !rawMessage.includes("Exception") && !rawMessage.includes("psycopg2")) {
+    return rawMessage;
+  }
+  return "An unexpected error occurred. Please try again.";
+}
+
 export class APIError extends Error {
   status: number;
   data: any;
+  userMessage: string;
 
-  constructor(status: number, data: any, message: string) {
-    super(message);
+  constructor(status: number, data: any, rawMessage: string) {
+    const safeMsg = getSafeErrorMessage(status, rawMessage);
+    super(safeMsg);
     this.name = "APIError";
     this.status = status;
     this.data = data;
+    this.userMessage = safeMsg;
   }
 }
 
@@ -69,11 +85,11 @@ async function fetchClient<T>(endpoint: string, options: FetchOptions = {}): Pro
         errorData = { detail: response.statusText };
       }
 
-      // Handle specific status codes if needed without global redirects (except perhaps 401 logic handled elsewhere if necessary)
+      const rawMsg = errorData?.detail || errorData?.message || `Request failed with status ${response.status}`;
       throw new APIError(
         response.status,
         errorData,
-        errorData.detail || errorData.message || `API request failed with status ${response.status}`
+        rawMsg
       );
     }
 
@@ -86,12 +102,12 @@ async function fetchClient<T>(endpoint: string, options: FetchOptions = {}): Pro
   } catch (error: any) {
     clearTimeout(id);
     if (error.name === "AbortError") {
-      throw new Error(`Request timed out after ${timeoutMs}ms`);
+      throw new Error("The request timed out. Please try again.");
     }
     if (error instanceof APIError) {
       throw error;
     }
-    throw new Error(`Network failure: ${error.message}`);
+    throw new Error("KnowFlow is having trouble connecting right now. Please try again.");
   }
 }
 

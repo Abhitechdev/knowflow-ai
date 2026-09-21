@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { SystemHealthBadge } from "@/components/system-health-badge";
 import {
   FileText,
   Bot,
@@ -17,35 +16,78 @@ import {
   Lock,
   Scale,
   Sparkles,
-  Zap,
   BookOpen,
-  Database,
-  Cpu,
   Layers,
-  ChevronRight,
-  ShieldAlert,
+  Upload,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
-import { fetchConversations, ConversationSummary } from "@/lib/api";
+import {
+  fetchConversations,
+  fetchDocuments,
+  ConversationSummary,
+  DocumentItem,
+} from "@/lib/api";
+
+function getGreeting(email?: string | null): string {
+  const hour = new Date().getHours();
+  let timeGreeting = "Good morning";
+  if (hour >= 12 && hour < 17) {
+    timeGreeting = "Good afternoon";
+  } else if (hour >= 17) {
+    timeGreeting = "Good evening";
+  }
+
+  if (!email) return timeGreeting;
+  const namePart = email.split("@")[0];
+  const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+  return `${timeGreeting}, ${formattedName}`;
+}
 
 export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const supabase = createClient();
+
+  const loadWorkspaceData = async () => {
+    setDataLoading(true);
+    setFetchError(null);
+    try {
+      const [convsRes, docsRes] = await Promise.allSettled([
+        fetchConversations(),
+        fetchDocuments(),
+      ]);
+
+      if (convsRes.status === "fulfilled" && convsRes.value?.data) {
+        setConversations(convsRes.value.data.slice(0, 5));
+      }
+
+      if (docsRes.status === "fulfilled" && docsRes.value?.items) {
+        setDocuments(docsRes.value.items.slice(0, 5));
+      }
+
+      if (convsRes.status === "rejected" && docsRes.status === "rejected") {
+        setFetchError("Some services are temporarily unavailable. Please try again.");
+      }
+    } catch (err) {
+      setFetchError("Some services are temporarily unavailable. Please try again.");
+    } finally {
+      setDataLoading(false);
+    }
+  };
 
   useEffect(() => {
     async function checkAuth() {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
-      if (user) {
-        try {
-          const convs = await fetchConversations();
-          setConversations((convs.data || []).slice(0, 5));
-        } catch (error) {
-          console.error("Failed to fetch dashboard data:", error);
-        }
-      }
       setLoading(false);
+      if (user) {
+        loadWorkspaceData();
+      }
     }
     checkAuth();
   }, [supabase.auth]);
@@ -59,144 +101,219 @@ export default function HomePage() {
   }
 
   // ====================================================
-  // AUTHENTICATED DASHBOARD VIEW
+  // AUTHENTICATED USER DASHBOARD
   // ====================================================
   if (user) {
     return (
-      <div className="space-y-8 max-w-5xl mx-auto py-4">
-        {/* Welcome Banner */}
-        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-success/10 border border-success/30 px-2.5 py-0.5 text-xs font-medium text-success">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-                  Authenticated Enterprise Workspace
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
-                Welcome to KnowFlow AI
-              </h1>
-              <p className="text-sm text-text-muted max-w-2xl leading-relaxed">
-                Your enterprise knowledge assistant. Ask grounded questions based on company SOPs and documentation.
-              </p>
+      <div className="space-y-8 max-w-6xl mx-auto py-2">
+        {/* Soft Error Banner if connectivity issue occurs */}
+        {fetchError && (
+          <div className="flex items-center justify-between rounded-xl border border-border bg-surface-muted p-4 text-xs text-text-secondary">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="h-4 w-4 text-warning" />
+              <span>{fetchError}</span>
             </div>
-            <div className="shrink-0">
-              <SystemHealthBadge />
-            </div>
+            <button
+              onClick={loadWorkspaceData}
+              className="inline-flex items-center gap-1 font-medium text-accent hover:underline"
+            >
+              <RefreshCw className="h-3 w-3" /> Retry
+            </button>
           </div>
+        )}
+
+        {/* User-Centric Hero Greeting */}
+        <div className="rounded-2xl border border-border bg-surface p-6 sm:p-8 space-y-3">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text-primary">
+            {getGreeting(user.email)}
+          </h1>
+          <p className="text-sm text-text-muted max-w-2xl leading-relaxed">
+            Search your organization&apos;s knowledge base, ask grounded questions, and review verified citations.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Quick Actions */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
-              Quick Actions
-            </h2>
-            <div className="grid grid-cols-1 gap-4">
-              <Link
-                href="/chat"
-                className="group rounded-xl border border-border bg-surface-muted p-5 flex items-center justify-between hover:bg-surface-hover transition-colors"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface text-accent">
-                    <Bot className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-text-primary">Ask AI</h3>
-                    <p className="text-xs text-text-muted">Query your company knowledge base</p>
-                  </div>
-                </div>
-                <ArrowRight className="h-5 w-5 text-text-muted group-hover:text-accent transition-colors" />
-              </Link>
-
-              <Link
-                href="/documents"
-                className="group rounded-xl border border-border bg-surface-muted p-5 flex items-center justify-between hover:bg-surface-hover transition-colors"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface text-accent">
-                    <FileText className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-text-primary">Upload Documents</h3>
-                    <p className="text-xs text-text-muted">Add new SOPs and manuals</p>
-                  </div>
-                </div>
-                <ArrowRight className="h-5 w-5 text-text-muted group-hover:text-accent transition-colors" />
-              </Link>
-
-              <Link
-                href="/search"
-                className="group rounded-xl border border-border bg-surface-muted p-5 flex items-center justify-between hover:bg-surface-hover transition-colors"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface text-accent">
-                    <Search className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-text-primary">Search Knowledge</h3>
-                    <p className="text-xs text-text-muted">Find specific document sections</p>
-                  </div>
-                </div>
-                <ArrowRight className="h-5 w-5 text-text-muted group-hover:text-accent transition-colors" />
-              </Link>
+        {/* Primary Action Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <Link
+            href="/chat"
+            className="group rounded-xl border border-border bg-surface p-5 flex flex-col justify-between hover:border-accent/40 hover:bg-surface-hover transition-all space-y-4"
+          >
+            <div className="space-y-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-muted text-accent">
+                <Bot className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sm text-text-primary group-hover:text-accent transition-colors">
+                  Ask AI
+                </h3>
+                <p className="text-xs text-text-muted mt-1 leading-relaxed">
+                  Ask questions about your organization&apos;s documents with verified citations.
+                </p>
+              </div>
             </div>
-          </div>
+            <div className="inline-flex items-center text-xs font-medium text-accent gap-1">
+              Start chat <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+          </Link>
 
-          {/* Recent Activity */}
-          <div className="space-y-4">
+          <Link
+            href="/documents"
+            className="group rounded-xl border border-border bg-surface p-5 flex flex-col justify-between hover:border-accent/40 hover:bg-surface-hover transition-all space-y-4"
+          >
+            <div className="space-y-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-muted text-accent">
+                <Upload className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sm text-text-primary group-hover:text-accent transition-colors">
+                  Upload Document
+                </h3>
+                <p className="text-xs text-text-muted mt-1 leading-relaxed">
+                  Add new SOPs, handbooks, and policy files to your knowledge base.
+                </p>
+              </div>
+            </div>
+            <div className="inline-flex items-center text-xs font-medium text-accent gap-1">
+              Manage documents <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+          </Link>
+
+          <Link
+            href="/search"
+            className="group rounded-xl border border-border bg-surface p-5 flex flex-col justify-between hover:border-accent/40 hover:bg-surface-hover transition-all space-y-4"
+          >
+            <div className="space-y-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-muted text-accent">
+                <Search className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-sm text-text-primary group-hover:text-accent transition-colors">
+                  Search Knowledge
+                </h3>
+                <p className="text-xs text-text-muted mt-1 leading-relaxed">
+                  Find specific text excerpts across indexed corporate documents.
+                </p>
+              </div>
+            </div>
+            <div className="inline-flex items-center text-xs font-medium text-accent gap-1">
+              Search passages <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </div>
+          </Link>
+        </div>
+
+        {/* Real Workspace Content: Recent Conversations & Documents */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          {/* Recent Conversations Card */}
+          <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
+              <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-accent" />
                 Recent Conversations
               </h2>
-              <Link href="/history" className="text-xs font-medium text-accent hover:underline flex items-center gap-1">
-                View all <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-
-            <div className="rounded-xl border border-border bg-surface p-4">
-              {conversations.length === 0 ? (
-                <div className="text-center py-8 text-text-muted space-y-3">
-                  <MessageSquare className="h-8 w-8 mx-auto text-text-muted opacity-40" />
-                  <p className="text-xs">No conversations yet.</p>
-                  <Link
-                    href="/chat"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline"
-                  >
-                    Start a new conversation <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              ) : (
-                <div className="divide-y divide-border">
-                  {conversations.map((conv) => (
-                    <Link
-                      key={conv.id}
-                      href={`/chat?id=${conv.id}`}
-                      className="block py-3 hover:bg-surface-hover rounded-lg px-3 transition-colors"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm text-text-primary truncate max-w-[280px]">
-                          {conv.title}
-                        </span>
-                        <span className="text-[11px] text-text-muted flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {new Date(conv.updated_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+              {conversations.length > 0 && (
+                <Link href="/history" className="text-xs font-medium text-accent hover:underline flex items-center gap-1">
+                  View all <ArrowRight className="h-3 w-3" />
+                </Link>
               )}
             </div>
+
+            {dataLoading ? (
+              <div className="space-y-3 py-2">
+                <div className="h-10 rounded-lg bg-surface-muted animate-pulse" />
+                <div className="h-10 rounded-lg bg-surface-muted animate-pulse" />
+              </div>
+            ) : conversations.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border p-6 text-center space-y-3">
+                <p className="text-xs text-text-muted">No conversations yet</p>
+                <Link
+                  href="/chat"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:bg-accent/90 transition-colors"
+                >
+                  <Bot className="h-3.5 w-3.5" /> Start a conversation
+                </Link>
+              </div>
+            ) : (
+              <div className="divide-y divide-border">
+                {conversations.map((conv) => (
+                  <Link
+                    key={conv.id}
+                    href={`/chat?id=${conv.id}`}
+                    className="block py-2.5 hover:bg-surface-hover rounded-lg px-2 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-xs text-text-primary truncate max-w-[260px]">
+                        {conv.title}
+                      </span>
+                      <span className="text-[11px] text-text-muted flex items-center gap-1 shrink-0">
+                        <Clock className="h-3 w-3" />
+                        {new Date(conv.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* Indexed Documents Card */}
+          <div className="rounded-xl border border-border bg-surface p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+                <FileText className="h-4 w-4 text-accent" />
+                Indexed Documents
+              </h2>
+              {documents.length > 0 && (
+                <Link href="/documents" className="text-xs font-medium text-accent hover:underline flex items-center gap-1">
+                  View all <ArrowRight className="h-3 w-3" />
+                </Link>
+              )}
+            </div>
+
+            {dataLoading ? (
+              <div className="space-y-3 py-2">
+                <div className="h-10 rounded-lg bg-surface-muted animate-pulse" />
+                <div className="h-10 rounded-lg bg-surface-muted animate-pulse" />
+              </div>
+            ) : documents.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border p-6 text-center space-y-3">
+                <p className="text-xs text-text-muted">No documents yet</p>
+                <Link
+                  href="/documents"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:bg-accent/90 transition-colors"
+                >
+                  <Upload className="h-3.5 w-3.5" /> Upload your first document
+                </Link>
+              </div>
+            ) : (
+              <div className="divide-y divide-border">
+                {documents.map((doc) => (
+                  <Link
+                    key={doc.id}
+                    href="/documents"
+                    className="block py-2.5 hover:bg-surface-hover rounded-lg px-2 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-xs text-text-primary truncate max-w-[260px]">
+                        {doc.title || doc.original_filename}
+                      </span>
+                      <span className="text-[10px] rounded px-1.5 py-0.5 border border-border bg-surface-muted text-text-muted shrink-0 capitalize">
+                        {doc.status.toLowerCase()}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     );
   }
 
   // ====================================================
-  // PUBLIC MARKETING LANDING PAGE VIEW
+  // PUBLIC PRODUCT MARKETING LANDING PAGE
   // ====================================================
   return (
     <div className="min-h-screen bg-background text-text-primary selection:bg-accent/20">
@@ -262,7 +379,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
             <Link
               href="/register"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3.5 text-sm font-semibold text-accent-foreground hover:bg-accent/90 transition-all shadow-lg hover:shadow-accent/10"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3.5 text-sm font-semibold text-accent-foreground hover:bg-accent/90 transition-all shadow-lg"
             >
               Create Free Workspace <ArrowRight className="h-4 w-4" />
             </Link>
@@ -356,7 +473,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Problem vs Solution Section */}
+      {/* Enterprise Comparison */}
       <section id="capabilities" className="border-b border-border py-20 bg-background">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center space-y-3">
@@ -367,37 +484,35 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Generic LLMs */}
-            <div className="rounded-2xl border border-danger/30 bg-danger/5 p-8 space-y-6">
-              <div className="flex items-center gap-2 text-danger font-bold text-lg">
-                <ShieldAlert className="h-5 w-5" /> Generic LLMs & Chatbots
+            <div className="rounded-2xl border border-border bg-surface-muted/40 p-8 space-y-4">
+              <div className="font-bold text-base text-text-primary">
+                Generic LLMs & Chatbots
               </div>
-              <ul className="space-y-3.5 text-xs text-text-secondary">
+              <ul className="space-y-3 text-xs text-text-muted">
                 <li className="flex items-start gap-2">
-                  <span className="text-danger font-bold">✕</span>
+                  <span className="text-text-muted font-bold">✕</span>
                   <span><strong>Hallucinates facts:</strong> Generates plausible-sounding but fictitious procedure details when answers are unknown.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-danger font-bold">✕</span>
+                  <span className="text-text-muted font-bold">✕</span>
                   <span><strong>No audit trail:</strong> Cannot link answers to specific page numbers or authorized revision dates.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-danger font-bold">✕</span>
+                  <span className="text-text-muted font-bold">✕</span>
                   <span><strong>Data privacy risk:</strong> Corporate prompts and secrets may be reused for public AI training cycles.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-danger font-bold">✕</span>
+                  <span className="text-text-muted font-bold">✕</span>
                   <span><strong>No clearance tiers:</strong> Internal documents are exposed indiscriminately without role-based access checks.</span>
                 </li>
               </ul>
             </div>
 
-            {/* KnowFlow AI */}
-            <div className="rounded-2xl border border-success/30 bg-success/5 p-8 space-y-6">
-              <div className="flex items-center gap-2 text-success font-bold text-lg">
-                <ShieldCheck className="h-5 w-5" /> KnowFlow AI Enterprise
+            <div className="rounded-2xl border border-border bg-surface p-8 space-y-4">
+              <div className="font-bold text-base text-text-primary flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-success" /> KnowFlow AI Enterprise
               </div>
-              <ul className="space-y-3.5 text-xs text-text-secondary">
+              <ul className="space-y-3 text-xs text-text-secondary">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
                   <span><strong>Grounded Answering Policy:</strong> Strictly constrained to retrieved chunks; transparently refuses if evidence is absent.</span>
