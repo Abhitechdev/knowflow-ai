@@ -54,21 +54,32 @@ search_rate_limiter = SlidingWindowRateLimiter(max_requests=60, window_seconds=6
 admin_rate_limiter = SlidingWindowRateLimiter(max_requests=50, window_seconds=60)
 
 
-async def rate_limit_chat(request: Request):
-    client_ip = request.client.host if request.client else "127.0.0.1"
+def _get_client_key(request: Request, prefix: str) -> str:
+    """Extracts a reliable client identifier from X-Forwarded-For or Authorization header."""
     auth_header = request.headers.get("Authorization", "")
-    key = f"chat:{auth_header[:24] if auth_header else client_ip}"
+    if auth_header:
+        # Use token signature/tail for per-user limiting
+        return f"{prefix}:auth:{auth_header[-32:] if len(auth_header) > 32 else auth_header}"
+    
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        client_ip = forwarded.split(",")[0].strip()
+    else:
+        client_ip = request.client.host if request.client else "127.0.0.1"
+    return f"{prefix}:ip:{client_ip}"
+
+
+async def rate_limit_chat(request: Request):
+    key = _get_client_key(request, "chat")
     chat_rate_limiter.check_limit(key)
 
 
 async def rate_limit_search(request: Request):
-    client_ip = request.client.host if request.client else "127.0.0.1"
-    key = f"search:{client_ip}"
+    key = _get_client_key(request, "search")
     search_rate_limiter.check_limit(key)
 
 
 async def rate_limit_admin(request: Request):
-    client_ip = request.client.host if request.client else "127.0.0.1"
-    key = f"admin:{client_ip}"
+    key = _get_client_key(request, "admin")
     admin_rate_limiter.check_limit(key)
 
