@@ -5,6 +5,7 @@ from app.auth.context import UserContext, get_current_user_context
 from app.db.session import get_db
 from app.rag.retrieval import HybridRetriever
 from app.schemas.search import SearchChunkResult, SearchResponse
+from app.security.rate_limiter import rate_limit_search
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/search", tags=["Search"])
 
 
-@router.get("", response_model=SearchResponse, status_code=status.HTTP_200_OK)
+@router.get("", response_model=SearchResponse, status_code=status.HTTP_200_OK, dependencies=[Depends(rate_limit_search)])
 async def hybrid_search(
     query: str = Query(..., min_length=1, max_length=500, description="Search query string"),
     department_id: str | None = Query(None, description="Optional department filter"),

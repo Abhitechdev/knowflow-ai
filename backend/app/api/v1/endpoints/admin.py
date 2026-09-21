@@ -8,6 +8,7 @@ from app.models.audit import AuditLog
 from app.models.chat import Conversation, Message
 from app.models.document import Document, DocumentChunk
 from app.models.feedback import Feedback
+from app.security.rate_limiter import rate_limit_admin
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -38,7 +39,7 @@ class AuditLogItem(BaseModel):
     created_at: str
 
 
-@router.get("/stats", response_model=AdminStatsResponse)
+@router.get("/stats", response_model=AdminStatsResponse, dependencies=[Depends(rate_limit_admin)])
 async def get_admin_stats(
     user_context: UserContext = Depends(require_admin),
     db: AsyncSession = Depends(get_db),

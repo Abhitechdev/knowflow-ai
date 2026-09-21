@@ -65,3 +65,10 @@ async def rate_limit_search(request: Request):
     client_ip = request.client.host if request.client else "127.0.0.1"
     key = f"search:{client_ip}"
     search_rate_limiter.check_limit(key)
+
+
+async def rate_limit_admin(request: Request):
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    key = f"admin:{client_ip}"
+    admin_rate_limiter.check_limit(key)
+

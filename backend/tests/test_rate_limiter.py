@@ -51,3 +51,30 @@ def test_check_limit_raises_http_429():
 
     assert exc_info.value.status_code == 429
     assert "Retry-After" in exc_info.value.headers
+
+
+def test_endpoint_rate_limit_integration(client):
+    from app.security.rate_limiter import search_rate_limiter
+    # Configure low limit for immediate verification
+    orig_max = search_rate_limiter.max_requests
+    orig_window = search_rate_limiter.window_seconds
+    try:
+        search_rate_limiter.max_requests = 3
+        search_rate_limiter.window_seconds = 30
+        search_rate_limiter.requests.clear()
+
+        # Send 3 requests - should pass or return 401/422/200 but NOT 429
+        for _ in range(3):
+            res = client.get("/api/v1/search?query=test")
+            assert res.status_code != 429
+
+        # 4th request must be rejected with 429
+        res = client.get("/api/v1/search?query=test")
+        assert res.status_code == 429
+        assert "Retry-After" in res.headers
+        assert "Rate limit exceeded" in res.json()["detail"]
+    finally:
+        search_rate_limiter.max_requests = orig_max
+        search_rate_limiter.window_seconds = orig_window
+        search_rate_limiter.requests.clear()
+

@@ -17,6 +17,7 @@ from app.schemas.chat import (
     FeedbackReadResponse,
     MessageRead,
 )
+from app.security.rate_limiter import rate_limit_chat
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,7 +29,7 @@ router = APIRouter(prefix="/chat", tags=["Chat & RAG"])
 rag_service = RAGService()
 
 
-@router.post("/query", response_model=ChatQueryResponse, status_code=status.HTTP_200_OK)
+@router.post("/query", response_model=ChatQueryResponse, status_code=status.HTTP_200_OK, dependencies=[Depends(rate_limit_chat)])
 async def query_knowledge_base(
     payload: ChatQueryRequest,
     user_context: UserContext = Depends(get_current_user_context),
